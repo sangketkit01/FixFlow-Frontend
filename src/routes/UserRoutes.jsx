@@ -9,6 +9,12 @@ export const UserRoute = () => {
                     <h1>User Home</h1>
                 </ProtectedRoute>
             } />
+
+            <Route path="/user/report-repair" element={
+                <ProtectedRoute>
+                    <Rprepair />
+                </ProtectedRoute>
+            } />
         </Routes>
     )
 }
