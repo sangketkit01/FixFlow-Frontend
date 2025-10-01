@@ -17,7 +17,7 @@ function MainNav() {
 
   const navItems = [
     { name: 'หน้าหลัก', icon: Home, href: '/' },
-    { name: 'แจ้งซ่อม', icon: Wrench, href: '/report-repair' },
+    { name: 'แจ้งซ่อม', icon: Wrench, href: '/user/report-repair' },
     { name: 'สถานะการซ่อม', icon: Activity, href: '/statusRepair' },
     { name: 'ประวัติการซ่อม', icon: Clock, href: '/historyRepair' }
   ];
@@ -27,20 +27,19 @@ function MainNav() {
   };
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg' 
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg'
           : 'bg-white'
-      } border-b border-purple-100`}
+        } border-b border-purple-100`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex items-center space-x-3 group cursor-pointer">
-              <img 
-                src="/src/assets/logo.svg" 
+              <img
+                src="/src/assets/logo.svg"
                 alt="Logo"
                 width={140}
                 className="transform group-hover:scale-105 transition-transform duration-200"
@@ -57,21 +56,18 @@ function MainNav() {
                 <a
                   key={index}
                   href={item.href}
-                  className={`group relative px-4 py-2.5 font-medium transition-all duration-200 rounded-lg ${
-                    active 
-                      ? 'text-purple-700 bg-purple-100' 
+                  className={`group relative px-4 py-2.5 font-medium transition-all duration-200 rounded-lg ${active
+                      ? 'text-purple-700 bg-purple-100'
                       : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center space-x-2">
-                    <Icon className={`w-4 h-4 transition-transform duration-200 ${
-                      active ? 'scale-110' : 'group-hover:scale-110'
-                    }`} />
+                    <Icon className={`w-4 h-4 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'
+                      }`} />
                     <span>{item.name}</span>
                   </div>
-                  <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-purple-600 to-purple-700 transition-all duration-300 ${
-                    active ? 'w-3/4' : 'w-0 group-hover:w-3/4'
-                  }`}></div>
+                  <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-purple-600 to-purple-700 transition-all duration-300 ${active ? 'w-3/4' : 'w-0 group-hover:w-3/4'
+                    }`}></div>
                 </a>
               );
             })}
@@ -107,9 +103,8 @@ function MainNav() {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+            }`}
         >
           <div className="py-4 space-y-1">
             {navItems.map((item, index) => {
@@ -119,15 +114,13 @@ function MainNav() {
                 <a
                   key={index}
                   href={item.href}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
-                    active 
-                      ? 'bg-purple-100 text-purple-700' 
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${active
+                      ? 'bg-purple-100 text-purple-700'
                       : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
-                  }`}
+                    }`}
                 >
-                  <Icon className={`w-5 h-5 transition-transform duration-200 ${
-                    active ? 'scale-110' : 'group-hover:scale-110'
-                  }`} />
+                  <Icon className={`w-5 h-5 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'
+                    }`} />
                   <span className="font-medium">{item.name}</span>
                   {active && (
                     <div className="ml-auto w-2 h-2 rounded-full bg-purple-600"></div>
@@ -135,7 +128,7 @@ function MainNav() {
                 </a>
               );
             })}
-            
+
             {/* Mobile User Section */}
             <div className="mt-4 pt-4 border-t border-purple-100">
               <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
