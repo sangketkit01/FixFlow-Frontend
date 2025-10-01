@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MainNav from "../../../components/user/MainNav";
 
 export default function UserRegister() {
     const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ export default function UserRegister() {
             );
 
             console.log("Register success:", res.data);
-            navigate("/home"); 
+            navigate("/home");
         } catch (error) {
             console.error(error);
             if (error.response) {
@@ -52,7 +53,8 @@ export default function UserRegister() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-100 via-white to-purple-200 px-4">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+            <MainNav />
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 mt-[100px]">
                 {/* Logo */}
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
