@@ -5,6 +5,7 @@ import UserRegister from "../pages/user/Register";
 import { UserRoute } from "./UserRoutes";
 import { AdminRoute } from "./AdminRoutes";
 import { TechnicianRoute } from "./TechnicianRoutes";
+import IndexPage from "../pages/index";
 
 export const PublicRoute = ({ children }) => {
     const { user } = useAuth();
@@ -38,7 +39,7 @@ const AppRoutes = () => {
     return (
         <>
             <Routes>
-                <Route path="/" element={<h1 className="text-white">Hello World</h1>} />
+                <Route path="/" element={<IndexPage />} />
                 <Route
                     path="/login"
                     element={
