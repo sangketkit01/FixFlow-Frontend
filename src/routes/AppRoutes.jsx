@@ -8,14 +8,14 @@ import { TechnicianRoute } from "./TechnicianRoutes";
 import AdminLogin from "../pages/admin/AdminLogin";
 import TechnicianLogin from "../pages/technician/TechnicianLogin";
 import TechnicianRegister from "../pages/technician/TechnicianRegister";
+import IndexPage from "../pages/index";
 
 
 const AppRoutes = () => {
     return (
         <>
             <Routes>
-                <Route path="/" element={<h1 className="text-white">Hello World</h1>} />
-
+                <Route path="/" element={<IndexPage />} />
                 <Route
                     path="/login"
                     element={

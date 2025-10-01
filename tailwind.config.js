@@ -7,7 +7,11 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx}" // ✅ ครอบโฟลเดอร์ components ที่อยู่นอก src
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Abel', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }
