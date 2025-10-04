@@ -29,8 +29,8 @@ function MainNav() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg'
-          : 'bg-white'
+        ? 'bg-white/95 backdrop-blur-md shadow-lg'
+        : 'bg-white'
         } border-b border-purple-100`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,8 +57,8 @@ function MainNav() {
                   key={index}
                   href={item.href}
                   className={`group relative px-4 py-2.5 font-medium transition-all duration-200 rounded-lg ${active
-                      ? 'text-purple-700 bg-purple-100'
-                      : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50'
+                    ? 'text-purple-700 bg-purple-100'
+                    : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50'
                     }`}
                 >
                   <div className="flex items-center space-x-2">
@@ -115,8 +115,8 @@ function MainNav() {
                   key={index}
                   href={item.href}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${active
-                      ? 'bg-purple-100 text-purple-700'
-                      : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'text-gray-700 hover:bg-purple-50 hover:text-purple-600'
                     }`}
                 >
                   <Icon className={`w-5 h-5 transition-transform duration-200 ${active ? 'scale-110' : 'group-hover:scale-110'
