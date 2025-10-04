@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import baseUrl from "../../../constants/ServerConstant";
 
 export default function TechnicianLogin() {
     const [username, setUsername] = useState("");
@@ -19,7 +20,7 @@ export default function TechnicianLogin() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8080/technician/login", // ✅ endpoint ของ Technician
+                baseUrl + "/technician/login", // ✅ endpoint ของ Technician
                 { username, email },
                 { withCredentials: true }
             );

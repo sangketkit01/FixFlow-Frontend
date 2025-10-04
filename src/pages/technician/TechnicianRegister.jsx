@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import baseUrl from "../../../constants/ServerConstant";
 
 export default function TechnicianRegister() {
     const [formData, setFormData] = useState({
@@ -14,10 +16,11 @@ export default function TechnicianRegister() {
         birth_date: "",
     });
     const [idCardImage, setIdCardImage] = useState(null);
-    const [previewImage, setPreviewImage] = useState(null); // 👈 state สำหรับ preview
+    const [previewImage, setPreviewImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
+    const [success, setSuccess] = useState(false); // 👈 เปลี่ยนจาก string เป็น boolean
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,7 +30,7 @@ export default function TechnicianRegister() {
         const file = e.target.files[0];
         setIdCardImage(file);
         if (file) {
-            setPreviewImage(URL.createObjectURL(file)); // 👈 สร้าง preview URL
+            setPreviewImage(URL.createObjectURL(file));
         } else {
             setPreviewImage(null);
         }
@@ -37,7 +40,7 @@ export default function TechnicianRegister() {
         e.preventDefault();
         setLoading(true);
         setError("");
-        setSuccess("");
+        setSuccess(false);
 
         try {
             const data = new FormData();
@@ -48,12 +51,12 @@ export default function TechnicianRegister() {
                 data.append("technician_registration_id_card_image", idCardImage);
             }
 
-            const res = await axios.post("http://localhost:8080/technician/register", data, {
+            const res = await axios.post(baseUrl + "/technician/register", data, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            setSuccess("สมัคร Technician สำเร็จ!");
             console.log("Register success:", res.data);
+            setSuccess(true); // ✅ โชว์ modal
         } catch (err) {
             console.error(err);
             if (err.response?.data?.errors) {
@@ -74,7 +77,6 @@ export default function TechnicianRegister() {
                 </h1>
 
                 {error && <div className="mb-4 text-red-600 font-medium">{error}</div>}
-                {success && <div className="mb-4 text-green-600 font-medium">{success}</div>}
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Fullname */}
@@ -187,25 +189,12 @@ export default function TechnicianRegister() {
 
                     {/* Upload ID card image */}
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                            อัปโหลดรูปบัตรประชาชน
-                        </label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            className="mt-1 w-full"
-                        />
-
-                        {/* 👇 Preview image */}
+                        <label className="block text-sm font-medium text-gray-700">อัปโหลดรูปบัตรประชาชน</label>
+                        <input type="file" accept="image/*" onChange={handleFileChange} className="mt-1 w-full" />
                         {previewImage && (
                             <div className="mt-4">
                                 <p className="text-sm text-gray-600 mb-2">Preview:</p>
-                                <img
-                                    src={previewImage}
-                                    alt="ID Card Preview"
-                                    className="w-64 rounded-lg border shadow"
-                                />
+                                <img src={previewImage} alt="ID Card Preview" className="w-64 rounded-lg border shadow" />
                             </div>
                         )}
                     </div>
@@ -222,6 +211,22 @@ export default function TechnicianRegister() {
                     </div>
                 </form>
             </div>
+
+            {/* ✅ Success Modal */}
+            {success && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full text-center">
+                        <h2 className="text-lg font-bold text-green-600 mb-4">สมัครสำเร็จ!</h2>
+                        <p className="text-gray-700 mb-6">คุณได้สมัครเป็น Technician เรียบร้อยแล้ว</p>
+                        <button
+                            onClick={() => navigate("/technician/home")}
+                            className="w-full py-2 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 transition"
+                        >
+                            ไปหน้า Home
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

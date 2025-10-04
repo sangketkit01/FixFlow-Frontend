@@ -9,6 +9,7 @@ import AdminLogin from "../pages/admin/AdminLogin";
 import TechnicianLogin from "../pages/technician/TechnicianLogin";
 import TechnicianRegister from "../pages/technician/TechnicianRegister";
 import IndexPage from "../pages/index";
+import { Logout } from "../pages/Logout";
 
 
 const AppRoutes = () => {
@@ -20,6 +21,12 @@ const AppRoutes = () => {
                     path="/login"
                     element={
                         <UserLogin />
+                    }
+                />
+                <Route
+                    path="/logout"
+                    element={
+                        <Logout />
                     }
                 />
 
