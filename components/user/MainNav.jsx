@@ -18,8 +18,8 @@ function MainNav() {
   const navItems = [
     { name: 'หน้าหลัก', icon: Home, href: '/' },
     { name: 'แจ้งซ่อม', icon: Wrench, href: '/report-repair' },
-    { name: 'สถานะการซ่อม', icon: Activity, href: '/statusRepair' },
-    { name: 'ประวัติการซ่อม', icon: Clock, href: '/historyRepair' }
+    { name: 'สถานะการซ่อม', icon: Activity, href: '/StatusRepair' },
+    { name: 'ประวัติการซ่อม', icon: Clock, href: '/HistoryRepair' }
   ];
 
   const isActive = (href) => {

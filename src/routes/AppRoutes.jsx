@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import LoginPage from "../pages/user/Login";
 import Rprepair from "../pages/user/Rprepair";
+import StatusRepair from "../pages/user/StatusRepair"
+import HistoryRepair from "../pages/user/HistoryRepair"
 
 export const PublicRoute = ({ children }) => {
     const { user } = useAuth();
@@ -38,6 +40,8 @@ const AppRoutes = () => {
             <Route path="/" element={<h1 className="text-black">Hello World ทดสอบฟ้อน</h1>} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/report-repair" element={<Rprepair />} />
+            <Route path="/statusRepair" element={<StatusRepair />} />
+            <Route path="/HistoryRepair" element={<HistoryRepair />} />
         </Routes>
     )
 }
