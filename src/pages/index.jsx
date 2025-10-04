@@ -20,12 +20,14 @@ export default function FixFlowLanding() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
             <UnauthorizedNavbar />
             {/* Hero Section */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     {/* Left Content */}
                     <div className="space-y-6 animate-fade-in">
-                        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 animate-slide-up">
-                            fix<span className="text-purple-600 inline-block animate-bounce-slow">×</span>ing
+                        <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold text-gray-900 animate-slide-up">
+                            fix
+                            <span className="text-purple-600 inline-block animate-bounce-slow">&</span>
+                            ing
                         </h1>
                         <h2 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent animate-slide-up-delay-1">
                             บริการรับซ่อมทั่วราชอาณาจักร

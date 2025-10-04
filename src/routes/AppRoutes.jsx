@@ -4,6 +4,7 @@ import LoginPage from "../pages/user/Login";
 import Rprepair from "../pages/user/Rprepair";
 import StatusRepair from "../pages/user/StatusRepair"
 import HistoryRepair from "../pages/user/HistoryRepair"
+import IndexPage from "../pages/index"
 
 export const PublicRoute = ({ children }) => {
     const { user } = useAuth();
@@ -37,7 +38,7 @@ const ProtectedRoute = ({ children, role }) => {
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<h1 className="text-black">Hello World ทดสอบฟ้อน</h1>} />
+            <Route path="/" element={<IndexPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/report-repair" element={<Rprepair />} />
             <Route path="/statusRepair" element={<StatusRepair />} />
