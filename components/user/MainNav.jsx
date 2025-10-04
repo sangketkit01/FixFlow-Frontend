@@ -96,7 +96,7 @@ function MainNav() {
             >
               <div className="w-10 h-10 rounded-full flex items-center justify-center">
                 <img
-                  src={user && user.profile_path ? user.profile_path : baseUrl + "/images/user_profile.png"}
+                  src={user && user.profile_path ? baseUrl + "/" + user.profile_path : baseUrl + "/images/user_profile.png"}
                   alt="User Avatar"
                   width={40}
                   height={40}

@@ -31,7 +31,6 @@ const AppRoutes = () => {
                 />
 
                 <Route path="/admin/login" element={
-
                     <AdminLogin />
                 } />
 

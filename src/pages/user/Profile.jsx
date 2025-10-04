@@ -3,8 +3,10 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import baseUrl from "../../../constants/ServerConstant";
 import MainNav from "../../../components/user/MainNav";
+import { useNavigate } from "react-router-dom";
 
 export default function UserProfile() {
+    const navigate = useNavigate();
     const { user, setUser } = useAuth();
     const [formData, setFormData] = useState({
         name: "",
@@ -23,6 +25,9 @@ export default function UserProfile() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+
 
     useEffect(() => {
         if (user) {
@@ -33,9 +38,8 @@ export default function UserProfile() {
                 gender: user.gender || "other",
             });
 
-            // ✅ ถ้ามีรูป ใช้รูปจริง, ถ้าไม่มี ใช้ default จาก public/images
             if (user.profile_path) {
-                setPreview(`${baseUrl}/uploads/${user.profile_path}`);
+                setPreview(`${baseUrl}/${user.profile_path}`);
             } else {
                 setPreview(`${baseUrl}/images/user_profile.png`);
             }
@@ -66,19 +70,21 @@ export default function UserProfile() {
         try {
             const data = new FormData();
             Object.keys(formData).forEach((key) => data.append(key, formData[key]));
-            if (profileImage) data.append("profile_image", profileImage);
+            if (profileImage) data.append("user_profile_image", profileImage);
 
             const res = await axios.put(`${baseUrl}/user/profile`, data, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setUser(res.data.user);
-            setMessage("✅ อัปเดตโปรไฟล์สำเร็จแล้ว");
+            setMessage("อัปเดตโปรไฟล์สำเร็จแล้ว");
+            setShowModal(true)
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.message || "เกิดข้อผิดพลาดในการอัปเดต");
         } finally {
             setLoading(false);
+            setTimeout(() => navigate(0), 1000);
         }
     };
 
@@ -103,12 +109,14 @@ export default function UserProfile() {
                 },
                 { withCredentials: true }
             );
-            setMessage("🔒 เปลี่ยนรหัสผ่านสำเร็จแล้ว");
+            setMessage("เปลี่ยนรหัสผ่านสำเร็จแล้ว");
             setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+            setShowModal(true)
         } catch (err) {
             setError(err.response?.data?.message || "เปลี่ยนรหัสผ่านไม่สำเร็จ");
         } finally {
             setLoading(false);
+            setTimeout(() => navigate(0), 1000);
         }
     };
 
@@ -261,6 +269,45 @@ export default function UserProfile() {
                         </div>
                     </form>
                 </div>
+                {showModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                        <div className="bg-white rounded-2xl shadow-2xl p-8 w-80 text-center animate-fade-in">
+                            {/* Success Icon */}
+                            <div className="flex justify-center mb-4">
+                                <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-green-100">
+                                    <svg
+                                        className="w-10 h-10 text-green-500 animate-bounce-in"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="3"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">สำเร็จ!</h2>
+                            <p className="text-gray-600 mb-6">{modalMessage || "ดำเนินการเสร็จสิ้นเรียบร้อยแล้ว"}</p>
+
+                            <button
+                                onClick={() => {
+                                    setShowModal(false);
+                                    window.location.reload();
+                                }}
+                                className="w-full py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:opacity-90 transition"
+                            >
+                                ตกลง
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+
             </div>
         </>
     );
