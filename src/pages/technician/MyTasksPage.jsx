@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-    User, MapPin, Calendar, ClipboardList, 
-    Clock, Wrench, CheckCircle, XCircle, 
+import {
+    User, MapPin, Calendar, ClipboardList,
+    Clock, Wrench, CheckCircle, XCircle,
     Loader, AlertTriangle, Play, ThumbsUp, ThumbsDown, Info
 } from 'lucide-react';
-import MainNav from "../../components/user/MainNav";
+import MainNav from '../../../components/user/MainNav';
+import baseUrl from '../../../constants/ServerConstant';
 
 
 // ==========================================================
@@ -21,13 +22,13 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
             <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
                 <div className="flex items-center mb-4">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${confirmColor.replace('hover:', '')} bg-opacity-10`}>
-                        <Info className={`w-6 h-6 ${confirmColor.replace('bg-', 'text-').replace('hover:text-','text-')}`} />
+                        <Info className={`w-6 h-6 ${confirmColor.replace('bg-', 'text-').replace('hover:text-', 'text-')}`} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
                 </div>
-                
+
                 <p className="text-gray-600 mb-8 ml-16">{message}</p>
-                
+
                 <div className="flex justify-end space-x-4">
                     <button
                         onClick={onCancel}
@@ -50,7 +51,7 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
 
 // --- คอมโพเนนต์ TaskCard (ปรับปรุงการแสดงผล) ---
 const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
-    
+
     const handleUpdateClick = (newStatus) => {
         onRequestUpdate(task._id, newStatus);
     };
@@ -146,7 +147,7 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
     };
 
     return (
-        <div 
+        <div
             className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animate-slide-up flex flex-col"
             style={{ animationDelay }}
         >
@@ -199,15 +200,16 @@ const MyTasksPage = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const token = localStorage.getItem('authToken');
-                const config = { headers: { Authorization: `Bearer ${token}` } };
-                const response = await axios.get('/api/technician/tasks/my-tasks', config);
+                const token = localStorage.getItem('authToken');;
+                const response = await axios.get(baseUrl + '/technician/tasks/my-tasks', {
+                    withCredentials: true
+                });
                 const tasksData = Array.isArray(response.data) ? response.data : response.data.tasks || [];
                 setTasks(tasksData);
             } catch (err) {
                 const message = err.response?.data?.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล";
                 setError(message);
-                setTasks([]); 
+                setTasks([]);
             } finally {
                 setLoading(false);
             }
@@ -222,8 +224,8 @@ const MyTasksPage = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const response = await axios.put(`/api/technician/tasks/${taskId}/status`, { status: newStatus }, config);
 
-            setTasks(currentTasks => 
-                currentTasks.map(task => 
+            setTasks(currentTasks =>
+                currentTasks.map(task =>
                     task._id === taskId ? response.data.task : task
                 )
             );
@@ -315,9 +317,9 @@ const MyTasksPage = () => {
                     tasks.length > 0 ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {tasks.map((task, index) => (
-                                <TaskCard 
-                                    key={task._id} 
-                                    task={task} 
+                                <TaskCard
+                                    key={task._id}
+                                    task={task}
                                     animationDelay={`${index * 100}ms`}
                                     onRequestUpdate={requestConfirmation}
                                     isUpdating={updatingTaskId === task._id}
@@ -332,13 +334,13 @@ const MyTasksPage = () => {
                     )
                 )}
             </main>
-            
-            <ConfirmationModal 
+
+            <ConfirmationModal
                 details={confirmation}
                 onConfirm={handleConfirm}
                 onCancel={handleCancel}
             />
-            
+
             <style>{`
                 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
                 @keyframes fade-in-fast { from { opacity: 0; } to { opacity: 1; } }

@@ -4,15 +4,12 @@ import UserLogin from "../pages/user/Login";
 import UserRegister from "../pages/user/Register";
 import { UserRoute } from "./UserRoutes";
 import { AdminRoute } from "./AdminRoutes";
-import { TechnicianRoute } from "./TechnicianRoutes";
 import AdminLogin from "../pages/admin/AdminLogin";
 import TechnicianLogin from "../pages/technician/TechnicianLogin";
 import TechnicianRegister from "../pages/technician/TechnicianRegister";
 import IndexPage from "../pages/index";
 import { Logout } from "../pages/Logout";
-
-import MyTasksPage from "../page/MyTasksPage";
-import AvailableTasksPage from "../page/AvailableTasksPage";
+import { TechnicianRoute } from "./TechnicianRoutes";
 
 
 const AppRoutes = () => {
@@ -53,15 +50,6 @@ const AppRoutes = () => {
                     path="/technician/register"
                     element={
                         <TechnicianRegister />
-                    }
-                />
-
-                <Route path ="/mytasks" 
-                    element = { < MyTasksPage / >
-                    }
-                />
-                <Route path ="/available-tasks" 
-                    element = { < AvailableTasksPage / >
                     }
                 />
 

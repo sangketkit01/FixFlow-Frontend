@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Wrench, MapPin, ClipboardList, AlertTriangle, Loader, CheckCircle, Info } from 'lucide-react';
-import MainNav from "../../components/user/MainNav";
+import MainNav from '../../../components/user/MainNav';
+import baseUrl from '../../../constants/ServerConstant';
 
 // ==========================================================
 // ===  ✅ 1. คัดลอก ConfirmationModal มาวางที่นี่         ===
@@ -16,13 +17,13 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
             <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
                 <div className="flex items-center mb-4">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${confirmColor.replace('hover:', '')} bg-opacity-10`}>
-                        <Info className={`w-6 h-6 ${confirmColor.replace('bg-', 'text-').replace('hover:text-','text-')}`} />
+                        <Info className={`w-6 h-6 ${confirmColor.replace('bg-', 'text-').replace('hover:text-', 'text-')}`} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
                 </div>
-                
+
                 <p className="text-gray-600 mb-8 ml-16">{message}</p>
-                
+
                 <div className="flex justify-end space-x-4">
                     <button
                         onClick={onCancel}
@@ -50,7 +51,7 @@ const AvailableTasksPage = () => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     // ✅ 2. เพิ่ม State สำหรับจัดการ Modal
     const [confirmation, setConfirmation] = useState(null);
 
@@ -62,8 +63,9 @@ const AvailableTasksPage = () => {
             setError(null);
             try {
                 const token = localStorage.getItem('authToken');
-                const config = { headers: { Authorization: `Bearer ${token}` } };
-                const response = await axios.get('/api/tasks/unassigned', config);
+                const response = await axios.get(baseUrl + '/technician/tasks/unassigned', {
+                    withCredentials: true
+                });
                 if (Array.isArray(response.data)) {
                     setTasks(response.data);
                 } else {
@@ -86,9 +88,9 @@ const AvailableTasksPage = () => {
             const token = localStorage.getItem('authToken');
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const response = await axios.patch(`/api/technician/tasks/${taskId}/accept`, {}, config);
-            
+
             alert(response.data.message); // หรือจะเปลี่ยนเป็น Modal สวยๆ ก็ได้
-            
+
             // อัปเดต UI โดยการกรองงานที่รับไปแล้วออก
             setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
 
@@ -134,8 +136,8 @@ const AvailableTasksPage = () => {
                 </div>
 
                 {/* --- Loading & Error States เหมือนเดิม --- */}
-                {loading && ( <div className="flex justify-center items-center py-20">...</div> )}
-                {error && ( <div className="bg-red-100 ...">{error}</div> )}
+                {loading && (<div className="flex justify-center items-center py-20">...</div>)}
+                {error && (<div className="bg-red-100 ...">{error}</div>)}
 
                 {/* --- Content - Task Cards --- */}
                 {!loading && !error && (
@@ -158,7 +160,7 @@ const AvailableTasksPage = () => {
                                         <div className="flex items-start">... {task.detail} ...</div>
                                         <div className="flex items-start">... {task.address} ...</div>
                                     </div>
-                                    
+
                                     <button
                                         // ✅ 4. แก้ไข onClick ให้เรียกฟังก์ชันเปิด Modal
                                         onClick={() => requestAcceptConfirmation(task._id)}
@@ -184,7 +186,7 @@ const AvailableTasksPage = () => {
                 onConfirm={handleConfirmAccept}
                 onCancel={handleCancelAccept}
             />
-            
+
             {/* --- CSS Animations เหมือนเดิม --- */}
             <style>{`
                 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
