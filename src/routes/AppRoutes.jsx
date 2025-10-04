@@ -11,6 +11,9 @@ import TechnicianRegister from "../pages/technician/TechnicianRegister";
 import IndexPage from "../pages/index";
 import { Logout } from "../pages/Logout";
 
+import MyTasksPage from "../page/MyTasksPage";
+import AvailableTasksPage from "../page/AvailableTasksPage";
+
 
 const AppRoutes = () => {
     return (
@@ -52,6 +55,16 @@ const AppRoutes = () => {
                         <TechnicianRegister />
                     }
                 />
+
+                <Route path ="/mytasks" 
+                    element = { < MyTasksPage / >
+                    }
+                />
+                <Route path ="/available-tasks" 
+                    element = { < AvailableTasksPage / >
+                    }
+                />
+
                 {UserRoute}
                 {AdminRoute}
                 {TechnicianRoute}
