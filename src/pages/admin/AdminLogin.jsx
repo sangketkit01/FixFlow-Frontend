@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import baseUrl from "../../../constants/ServerConstant";
 
 export default function AdminLogin() {
     const [username, setUsername] = useState("");
@@ -19,13 +20,13 @@ export default function AdminLogin() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8080/admin/login", // 🔑 endpoint สำหรับ admin
+                baseUrl + "/admin/login",
                 { username, password },
                 { withCredentials: true }
             );
 
             console.log("Admin login success:", res.data);
-            navigate("/admin/dashboard"); // 🔑 ไปที่หน้าแดชบอร์ด admin
+            navigate("/admin/dashboard");
         } catch (error) {
             console.error(error);
             if (error.response) {

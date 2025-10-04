@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import MainNav from "../../../components/user/MainNav";
+import UnauthorizedNavbar from "../../../components/user/Unauthorized-Navbar";
+import { useAuth } from "../../context/AuthContext";
+import baseUrl from "../../../constants/ServerConstant";
 
 export default function UserLogin() {
+    const { user, setUser } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
@@ -13,6 +16,11 @@ export default function UserLogin() {
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (user) {
+            navigate("/home");
+        }
+    }, [user, navigate]);
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -22,12 +30,19 @@ export default function UserLogin() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8080/user/login",
+                baseUrl + "/user/login",
                 { username, password },
                 { withCredentials: true }
             );
 
             console.log("Login success:", res.data);
+
+            const meRes = await axios.get(baseUrl + "/user/me", {
+                withCredentials: true,
+            });
+
+            setUser(meRes.data);
+
             navigate("/home");
         } catch (error) {
             console.error(error);
@@ -42,11 +57,12 @@ export default function UserLogin() {
         }
     };
 
+
     return (
         <>
+            <UnauthorizedNavbar />
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-100 via-white to-purple-200 px-4">
-                <MainNav />
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 mt-[50px]">
+                <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
                     {/* Logo */}
                     <div className="text-center mb-8">
                         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">

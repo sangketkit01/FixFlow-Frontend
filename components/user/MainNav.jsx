@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Home, Wrench, Activity, Clock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, Home, Wrench, Activity, Clock, User, LogOut } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../src/context/AuthContext';
+import baseUrl from '../../constants/ServerConstant';
 
 function MainNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,8 +20,18 @@ function MainNav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const navItems = [
-    { name: 'หน้าหลัก', icon: Home, href: '/' },
+    { name: 'หน้าหลัก', icon: Home, href: '/home' },
     { name: 'แจ้งซ่อม', icon: Wrench, href: '/user/report-repair' },
     { name: 'สถานะการซ่อม', icon: Activity, href: '/statusRepair' },
     { name: 'ประวัติการซ่อม', icon: Clock, href: '/historyRepair' }
@@ -73,18 +88,47 @@ function MainNav() {
             })}
           </div>
 
-          {/* User Section & Mobile Menu Button */}
-          <div className="flex items-center space-x-4">
-            {/* User Avatar (Desktop) */}
-            <div className="hidden md:flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-purple-50 cursor-pointer transition-colors duration-200">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-md">
-                <span className="text-white font-semibold text-sm">ผู้</span>
+          {/* User Avatar (Desktop) with Dropdown */}
+          <div className="hidden md:block relative" ref={profileRef}>
+            <button
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg hover:bg-purple-50 cursor-pointer transition-colors duration-200"
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                <img
+                  src={user && user.profile_path ? baseUrl + "/" + user.profile_path : baseUrl + "/images/user_profile.png"}
+                  alt="User Avatar"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
               </div>
               <div className="text-left">
-                <p className="text-sm font-semibold text-gray-800">ผู้ใช้งาน</p>
+                <p className="text-sm font-semibold text-gray-800">{user && user.name ? user.name : "Unknown"}</p>
                 <p className="text-xs text-gray-500">User Account</p>
               </div>
-            </div>
+            </button>
+
+            {/* Dropdown Menu */}
+            {isProfileOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-purple-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                <a
+                  href="/user/profile"
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
+                >
+                  <User className="w-5 h-5" />
+                  <span className="font-medium">จัดการโปรไฟล์</span>
+                </a>
+                <div className="border-t border-purple-100 my-1"></div>
+                <a
+                  href="/logout"
+                  className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-200"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <a href='/logout' className="font-medium text-gray-700">ออกจากระบบ</a>
+                </a>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -144,7 +188,7 @@ function MainNav() {
           </div>
         </div>
       </div>
-    </nav>
+    </nav >
   );
 }
 

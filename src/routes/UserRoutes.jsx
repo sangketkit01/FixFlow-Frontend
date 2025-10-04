@@ -1,6 +1,8 @@
 import { Route } from "react-router-dom";
 import { ProtectedRoute } from "./AuthRoutes";
 import Rprepair from "../pages/user/Rprepair";
+import Homepage from "../pages/user/Home";
+import UserProfile from "../pages/user/Profile";
 
 export const UserRoute = (
     <>
@@ -8,7 +10,7 @@ export const UserRoute = (
             path="/home"
             element={
                 <ProtectedRoute role={"user"}>
-                    <h1>User Home</h1>
+                    <Homepage />
                 </ProtectedRoute>
             }
         />
@@ -20,5 +22,11 @@ export const UserRoute = (
                 </ProtectedRoute>
             }
         />
+
+        <Route path="/user/profile" element={
+            <ProtectedRoute role={"user"}>
+                <UserProfile />
+            </ProtectedRoute>
+        } />
     </>
 );

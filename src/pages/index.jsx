@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wrench, Star, CheckCircle } from 'lucide-react';
 import MainNav from "../../components/user/MainNav";
+import UnauthorizedNavbar from '../../components/user/Unauthorized-Navbar';
 
 export default function FixFlowLanding() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,7 +18,7 @@ export default function FixFlowLanding() {
     return (
 
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-            <MainNav />
+            <UnauthorizedNavbar />
             {/* Hero Section */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
                 <div className="grid md:grid-cols-2 gap-12 items-center">

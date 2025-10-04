@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import baseUrl from "../../../constants/ServerConstant";
 
 export default function TechnicianLogin() {
     const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -19,8 +20,8 @@ export default function TechnicianLogin() {
 
         try {
             const res = await axios.post(
-                "http://localhost:8080/technician/login", // ✅ endpoint ของ Technician
-                { username, email },
+                baseUrl + "/technician/login", // ✅ endpoint ของ Technician
+                { username, password },
                 { withCredentials: true }
             );
 
@@ -75,16 +76,16 @@ export default function TechnicianLogin() {
                     {/* Email */}
                     <div>
                         <label
-                            htmlFor="email"
+                            htmlFor="password"
                             className="block mb-2 text-sm font-medium text-gray-700"
                         >
-                            อีเมล
+                            รหัสผ่าน
                         </label>
                         <input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="you@example.com"
                             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition"
                         />
