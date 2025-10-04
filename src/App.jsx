@@ -1,27 +1,12 @@
-import './App.css'
-import { Routes, Route, Link } from 'react-router-dom';
-
-// 1. Import หน้าใหม่ที่เราสร้างเข้ามา
-import MyTasksPage from './page/MyTasksPage.jsx';
-import AvailableTasksPage from './page/AvailableTasksPage.jsx'; 
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import baseUrl from '../constants/ServerConstant'
+import axios from 'axios'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
-  return (
-    <>
-      {/* 2. สร้างเมนู Link สำหรับไปหน้าต่างๆ */}
-      <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>
-        <Link to="/tasks" style={{ marginRight: '1rem' }}>งานของฉัน</Link>
-        <Link to="/tasks/available">หางาน</Link>
-      </nav>
-      
-      {/* 3. เพิ่ม Route สำหรับแสดงผลแต่ละหน้า */}
-      <Routes>
-        <Route path="/tasks" element={<MyTasksPage />} />
-        <Route path="/tasks/available" element={<AvailableTasksPage />} />
-      </Routes>
-    
-    </>
-  )
+  return <AppRoutes />
 }
 
-export default App
+export default App;
