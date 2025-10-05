@@ -3,6 +3,8 @@ import { ProtectedRoute } from "./AuthRoutes";
 import Rprepair from "../pages/user/Rprepair";
 import Homepage from "../pages/user/Home";
 import UserProfile from "../pages/user/Profile";
+import StatusRepair from "../pages/user/statusRepair";
+import HistoryRepair from "../pages/user/historyRepair";
 
 export const UserRoute = (
     <>
@@ -26,6 +28,18 @@ export const UserRoute = (
         <Route path="/user/profile" element={
             <ProtectedRoute role={"user"}>
                 <UserProfile />
+            </ProtectedRoute>
+        } />
+
+        <Route path="/user/status-repair" element={
+            <ProtectedRoute role={"user"}>
+                <StatusRepair />
+            </ProtectedRoute>
+        } />
+
+        <Route path="/user/history-repair" element={
+            <ProtectedRoute role={"user"}>
+                <HistoryRepair />
             </ProtectedRoute>
         } />
     </>

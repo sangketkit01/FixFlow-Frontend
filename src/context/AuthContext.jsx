@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
                     withCredentials: true,
                 });
                 setUser(res.data);
-                console.log("AuthContext fetched:", res.data);
             } catch (err) {
                 setUser(null);
                 console.log("AuthContext error:", err);

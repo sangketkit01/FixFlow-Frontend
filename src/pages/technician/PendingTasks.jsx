@@ -97,7 +97,7 @@ const PendingTaskCard = ({ task, animationDelay, onAcceptTask, isAccepting }) =>
                 <div className="space-y-3 text-sm text-gray-700">
                     <div className="flex items-center">
                         <User className="w-4 h-4 mr-3 text-blue-500" />
-                        <strong>ลูกค้า:</strong><span className="ml-2">{renderCustomerName(task.username)}</span>
+                        <strong>ลูกค้า:</strong><span className="ml-2">{(task.username)}</span>
                     </div>
                     <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-3 text-blue-500" />
