@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import {
     User, MapPin, Calendar, ClipboardList,
     Clock, Wrench, CheckCircle, XCircle,
@@ -8,6 +9,12 @@ import {
 import MainNav from '../../../components/user/MainNav';
 import baseUrl from '../../../constants/ServerConstant';
 
+// Component สำหรับแสดง Icon สถานะ (เพิ่มเข้ามา)
+const ExclamationCircle = ({ className }) => (
+    <svg className={className} fill="currentColor" viewBox="0 0 20 20">
+        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+    </svg>
+);
 
 // ==========================================================
 // ===         คอมโพเนนต์: Confirmation Modal             ===
@@ -48,8 +55,9 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
     );
 };
 
-
-// --- คอมโพเนนต์ TaskCard (ปรับปรุงการแสดงผล) ---
+// ==========================================================
+// ===         คอมโพเนนต์: TaskCard                       ===
+// ==========================================================
 const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
 
     const handleUpdateClick = (newStatus) => {
@@ -59,19 +67,25 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
     const getStatusInfo = (status) => {
         switch (status) {
             case 'pending':
-                return { icon: <Clock className="w-4 h-4" />, color: 'bg-yellow-100 text-yellow-800', text: 'รอดำเนินการ' };
+                return { icon: <ExclamationCircle className="w-5 h-5" />, color: 'bg-yellow-200 text-yellow-900', text: 'รอดำเนินการ' };
+            case 'accepted':
+                return { icon: <Wrench className="w-5 h-5" />, color: 'bg-blue-200 text-blue-900', text: 'รับงานเรียบร้อย' };
             case 'fixing':
-                return { icon: <Wrench className="w-4 h-4" />, color: 'bg-blue-100 text-blue-800', text: 'กำลังซ่อม' };
+                return { icon: <Wrench className="w-5 h-5 animate-spin" />, color: 'bg-indigo-200 text-indigo-900', text: 'กำลังซ่อม' };
             case 'successful':
-                return { icon: <CheckCircle className="w-4 h-4" />, color: 'bg-green-100 text-green-800', text: 'ซ่อมสำเร็จ' };
+                return { icon: <CheckCircle className="w-5 h-5" />, color: 'bg-green-200 text-green-900', text: 'ซ่อมสำเร็จ' };
+            case 'request_canceling':
+                return { icon: <ExclamationCircle className="w-5 h-5" />, color: 'bg-orange-200 text-orange-900', text: 'คำขอยกเลิก' };
+            case 'cancelled':
+                return { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-200 text-red-900', text: 'ถูกยกเลิก' };
             case 'failed':
-                return { icon: <XCircle className="w-4 h-4" />, color: 'bg-red-100 text-red-800', text: 'ซ่อมไม่สำเร็จ' };
+                return { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-300 text-red-900', text: 'ซ่อมไม่สำเร็จ' };
             default:
-                return { icon: <Clock className="w-4 h-4" />, color: 'bg-gray-100 text-gray-800', text: 'ไม่ระบุ' };
+                return { icon: <Clock className="w-5 h-5" />, color: 'bg-gray-200 text-gray-900', text: 'ไม่ระบุ' };
         }
     };
 
-    // === [แก้ไข] ฟังก์ชันสำหรับแสดงชื่อลูกค้าอย่างปลอดภัย ===
+    // ฟังก์ชันสำหรับแสดงชื่อลูกค้าอย่างปลอดภัย
     const renderCustomerName = (user) => {
         if (!user) {
             return <span className="text-gray-500">ไม่มีข้อมูล</span>;
@@ -80,7 +94,7 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
         return fullName || <span className="text-gray-500">ไม่มีชื่อ</span>;
     };
 
-    // === [แก้ไข] ฟังก์ชันสำหรับแสดงวันที่อย่างปลอดภัย ===
+    // ฟังก์ชันสำหรับแสดงวันที่อย่างปลอดภัย
     const formatCreationDate = (dateString) => {
         if (!dateString) {
             return <span className="text-gray-500">ไม่มีข้อมูล</span>;
@@ -108,12 +122,31 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
             case 'pending':
                 return (
                     <button
-                        onClick={() => handleUpdateClick('fixing')}
-                        className="w-full flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                        onClick={() => handleUpdateClick('accepted')}
+                        className="w-full flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
                     >
-                        <Play className="w-4 h-4 mr-2" />
-                        เริ่มดำเนินการซ่อม
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        รับงาน
                     </button>
+                );
+            case 'accepted':
+                return (
+                    <div className="flex space-x-2">
+                        <button
+                            onClick={() => handleUpdateClick('fixing')}
+                            className="w-1/2 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                        >
+                            <Play className="w-4 h-4 mr-2" />
+                            เริ่มซ่อม
+                        </button>
+                        <button
+                            onClick={() => handleUpdateClick('request_canceling')}
+                            className="w-1/2 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                        >
+                            <XCircle className="w-4 h-4 mr-2" />
+                            ขอยกเลิกงาน
+                        </button>
+                    </div>
                 );
             case 'fixing':
                 return (
@@ -134,11 +167,28 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
                         </button>
                     </div>
                 );
+            case 'request_canceling':
+                return (
+                    <div className="text-center text-sm text-orange-600 p-2 rounded-lg bg-orange-50 font-medium border border-orange-200">
+                        รอแอดมินอนุมัติการยกเลิก
+                    </div>
+                );
+            case 'cancelled':
+                return (
+                    <div className="text-center text-sm text-red-600 p-2 rounded-lg bg-red-50 font-medium border border-red-200">
+                        งานถูกยกเลิกแล้ว
+                    </div>
+                );
             case 'successful':
+                return (
+                    <div className="text-center text-sm text-green-600 p-2 rounded-lg bg-green-50 font-medium border border-green-200">
+                        งานเสร็จสิ้น - ซ่อมสำเร็จ
+                    </div>
+                );
             case 'failed':
                 return (
-                    <div className="text-center text-sm text-gray-500 p-2 rounded-lg bg-gray-100 font-medium">
-                        งานเสร็จสิ้นแล้ว
+                    <div className="text-center text-sm text-red-600 p-2 rounded-lg bg-red-50 font-medium border border-red-200">
+                        งานเสร็จสิ้น - ซ่อมไม่สำเร็จ
                     </div>
                 );
             default:
@@ -188,8 +238,9 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
     );
 };
 
-
-// --- คอมโพเนนต์หลัก MyTasksPage ---
+// ==========================================================
+// ===         คอมโพเนนต์หลัก: MyTasksPage                ===
+// ==========================================================
 const MyTasksPage = () => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -200,7 +251,7 @@ const MyTasksPage = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const token = localStorage.getItem('authToken');;
+                const token = localStorage.getItem('authToken');
                 const response = await axios.get(baseUrl + '/technician/tasks/my-tasks', {
                     withCredentials: true
                 });
@@ -220,9 +271,11 @@ const MyTasksPage = () => {
     const handleUpdateStatus = async (taskId, newStatus) => {
         setUpdatingTaskId(taskId);
         try {
-            const token = localStorage.getItem('authToken');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            const response = await axios.put(`/api/technician/tasks/${taskId}/status`, { status: newStatus }, config);
+            const response = await axios.put(
+                `${baseUrl}/technician/tasks/${taskId}/status`,
+                { status: newStatus },
+                { withCredentials: true }
+            );
 
             setTasks(currentTasks =>
                 currentTasks.map(task =>
@@ -240,12 +293,28 @@ const MyTasksPage = () => {
     const requestConfirmation = (taskId, newStatus) => {
         let details = {};
         switch (newStatus) {
+            case 'accepted':
+                details = {
+                    title: 'ยืนยันการรับงาน?',
+                    message: 'คุณต้องการรับงานนี้ใช่หรือไม่?',
+                    confirmText: 'ใช่, รับงาน',
+                    confirmColor: 'bg-purple-500 hover:bg-purple-600',
+                };
+                break;
             case 'fixing':
                 details = {
                     title: 'ยืนยันการเริ่มดำเนินการ?',
                     message: 'คุณต้องการเริ่มดำเนินการซ่อมงานนี้ใช่หรือไม่?',
                     confirmText: 'ใช่, เริ่มเลย',
                     confirmColor: 'bg-blue-500 hover:bg-blue-600',
+                };
+                break;
+            case 'request_canceling':
+                details = {
+                    title: 'ยืนยันการขอยกเลิกงาน?',
+                    message: 'คุณต้องการส่งคำขอยกเลิกงานนี้ไปยังแอดมินใช่หรือไม่? งานจะถูกยกเลิกเมื่อแอดมินอนุมัติ',
+                    confirmText: 'ใช่, ขอยกเลิก',
+                    confirmColor: 'bg-orange-500 hover:bg-orange-600',
                 };
                 break;
             case 'successful':
@@ -363,4 +432,3 @@ const MyTasksPage = () => {
 };
 
 export default MyTasksPage;
-
