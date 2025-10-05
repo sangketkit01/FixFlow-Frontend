@@ -6,8 +6,9 @@ import {
     Clock, Wrench, CheckCircle, XCircle,
     Loader, AlertTriangle, Play, ThumbsUp, ThumbsDown, Info
 } from 'lucide-react';
-import MainNav from '../../../components/user/MainNav';
+
 import baseUrl from '../../../constants/ServerConstant';
+import Navtech from '../../../components/technician/Navtech';
 
 // Component สำหรับแสดง Icon สถานะ
 const ExclamationCircle = ({ className }) => (
@@ -376,7 +377,7 @@ const MyTasksPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-            <MainNav />
+            <Navtech />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
                 <div className="text-center mb-12 animate-fade-in">
                     <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
