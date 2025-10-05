@@ -159,7 +159,7 @@ const StatusRepair = () => {
 
                                     {task.technician_id && (
                                         <div className="flex items-center gap-2 mt-2 text-blue-600">
-                                            <Phone className="w-4 h-4" /> ช่าง {task.technician_id.name} ({task.technician_id.phone})
+                                            <Phone className="w-4 h-4" /> ช่าง {task.technician.full_name} ({task.technician.phone})
                                         </div>
                                     )}
                                 </div>

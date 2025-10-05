@@ -183,7 +183,7 @@ const HistoryRepair = () => {
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
                                     <Wrench className="w-4 h-4" /> ช่าง:{" "}
-                                    {t.technician_id?.full_name || "ไม่ระบุ"}
+                                    {t.technician?.full_name || "ไม่ระบุ"}
                                 </div>
                             </div>
                         ))
