@@ -39,7 +39,7 @@ const UserHome = () => {
                 <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white py-16 mt-20">
                     <div className="max-w-6xl mx-auto px-4 text-center">
                         <h1 className="text-4xl font-bold mb-2">
-                            สวัสดี {user?.name || "ผู้ใช้"} 👋
+                            สวัสดี {user?.name || "ผู้ใช้"}
                         </h1>
                         <p className="text-purple-100">
                             ยินดีต้อนรับสู่ระบบแจ้งซ่อมเครื่องใช้ไฟฟ้า FixFlow
@@ -66,21 +66,21 @@ const UserHome = () => {
                         <h2 className="text-xl font-bold text-gray-800 mb-4">การดำเนินการด่วน</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <button
-                                onClick={() => navigate("/user/rprepair")}
+                                onClick={() => navigate("/user/report-repair")}
                                 className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8 rounded-2xl shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all"
                             >
                                 <PlusCircle className="w-8 h-8 mb-2" />
                                 <span className="text-lg font-semibold">แจ้งซ่อม</span>
                             </button>
                             <button
-                                onClick={() => navigate("/user/status")}
+                                onClick={() => navigate("/user/status-repair")}
                                 className="flex flex-col items-center justify-center bg-gradient-to-r from-purple-600 to-purple-700 text-white py-8 rounded-2xl shadow-lg hover:from-purple-700 hover:to-purple-800 transition-all"
                             >
                                 <Wrench className="w-8 h-8 mb-2" />
                                 <span className="text-lg font-semibold">ตรวจสอบสถานะ</span>
                             </button>
                             <button
-                                onClick={() => navigate("/user/history")}
+                                onClick={() => navigate("/user/history-repair")}
                                 className="flex flex-col items-center justify-center bg-gradient-to-r from-green-600 to-green-700 text-white py-8 rounded-2xl shadow-lg hover:from-green-700 hover:to-green-800 transition-all"
                             >
                                 <History className="w-8 h-8 mb-2" />
