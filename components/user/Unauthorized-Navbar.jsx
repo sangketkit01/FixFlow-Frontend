@@ -7,9 +7,11 @@ export default function UnauthorizedNavbar() {
                     {/* Left side - Logo and menu items */}
                     <div className="flex items-center space-x-8">
                         {/* Logo */}
-                        <div className="text-xl font-semibold text-gray-800">
-                            Logo
-                        </div>
+                        <h1 className="text-xl font-semibold text-gray-900 leading-none">
+                            fix
+                            <span className="text-purple-600 inline-block ">&</span>
+                            ing
+                        </h1>
 
                         {/* Menu items */}
                         <div className="hidden md:flex space-x-8">

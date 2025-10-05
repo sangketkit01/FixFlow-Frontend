@@ -9,7 +9,7 @@ import {
 import MainNav from '../../../components/user/MainNav';
 import baseUrl from '../../../constants/ServerConstant';
 
-// Component สำหรับแสดง Icon สถานะ (เพิ่มเข้ามา)
+// Component สำหรับแสดง Icon สถานะ
 const ExclamationCircle = ({ className }) => (
     <svg className={className} fill="currentColor" viewBox="0 0 20 20">
         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -85,12 +85,12 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
         }
     };
 
-    // ฟังก์ชันสำหรับแสดงชื่อลูกค้าอย่างปลอดภัย
-    const renderCustomerName = (user) => {
-        if (!user) {
+    // ฟังก์ชันสำหรับแสดงชื่อลูกค้าอย่างปลอดภัย (ใช้ task.userInfo ที่ดึงมาจาก backend)
+    const renderCustomerName = (userInfo) => {
+        if (!userInfo) {
             return <span className="text-gray-500">ไม่มีข้อมูล</span>;
         }
-        const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+        const fullName = `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim();
         return fullName || <span className="text-gray-500">ไม่มีชื่อ</span>;
     };
 
@@ -218,7 +218,7 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
                 <div className="space-y-3 text-sm text-gray-700">
                     <div className="flex items-center">
                         <User className="w-4 h-4 mr-3 text-blue-500" />
-                        <strong>ลูกค้า:</strong><span className="ml-2">{renderCustomerName(task.username)}</span>
+                        <strong>ลูกค้า:</strong><span className="ml-2">{(task.username)}</span>
                     </div>
                     <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-3 text-blue-500" />
@@ -247,6 +247,7 @@ const MyTasksPage = () => {
     const [error, setError] = useState(null);
     const [confirmation, setConfirmation] = useState(null);
     const [updatingTaskId, setUpdatingTaskId] = useState(null);
+    const [filterStatus, setFilterStatus] = useState('all');
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -350,6 +351,29 @@ const MyTasksPage = () => {
         setConfirmation(null);
     };
 
+    // ฟังก์ชันฟิลเตอร์งาน
+    const filteredTasks = tasks.filter(task => {
+        if (filterStatus === 'all') return true;
+        return task.status === filterStatus;
+    });
+
+    // ฟังก์ชันนับจำนวนงานแต่ละสถานะ
+    const getStatusCount = (status) => {
+        if (status === 'all') return tasks.length;
+        return tasks.filter(task => task.status === status).length;
+    };
+
+    const statusFilters = [
+        { value: 'all', label: 'ทั้งหมด', color: 'bg-gray-500 hover:bg-gray-600' },
+        { value: 'pending', label: 'รอดำเนินการ', color: 'bg-yellow-500 hover:bg-yellow-600' },
+        { value: 'accepted', label: 'รับงานแล้ว', color: 'bg-blue-500 hover:bg-blue-600' },
+        { value: 'fixing', label: 'กำลังซ่อม', color: 'bg-indigo-500 hover:bg-indigo-600' },
+        { value: 'successful', label: 'ซ่อมสำเร็จ', color: 'bg-green-500 hover:bg-green-600' },
+        { value: 'request_canceling', label: 'คำขอยกเลิก', color: 'bg-orange-500 hover:bg-orange-600' },
+        { value: 'cancelled', label: 'ถูกยกเลิก', color: 'bg-red-500 hover:bg-red-600' },
+        { value: 'failed', label: 'ซ่อมไม่สำเร็จ', color: 'bg-red-600 hover:bg-red-700' }
+    ];
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
             <MainNav />
@@ -362,6 +386,29 @@ const MyTasksPage = () => {
                         ภาพรวมงานทั้งหมดที่คุณได้รับมอบหมาย
                     </p>
                 </div>
+
+                {/* Filter Buttons */}
+                {!loading && !error && (
+                    <div className="mb-8 animate-fade-in">
+                        <div className="flex flex-wrap gap-3 justify-center">
+                            {statusFilters.map((filter) => (
+                                <button
+                                    key={filter.value}
+                                    onClick={() => setFilterStatus(filter.value)}
+                                    className={`px-4 py-2 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg ${filterStatus === filter.value
+                                        ? filter.color + ' ring-4 ring-offset-2 ring-purple-300'
+                                        : filter.color + ' opacity-70'
+                                        }`}
+                                >
+                                    {filter.label}
+                                    <span className="ml-2 bg-white bg-opacity-30 px-2 py-0.5 rounded-full text-sm">
+                                        {getStatusCount(filter.value)}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {loading && (
                     <div className="flex justify-center items-center py-20">
@@ -383,9 +430,9 @@ const MyTasksPage = () => {
                 )}
 
                 {!loading && !error && (
-                    tasks.length > 0 ? (
+                    filteredTasks.length > 0 ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {tasks.map((task, index) => (
+                            {filteredTasks.map((task, index) => (
                                 <TaskCard
                                     key={task._id}
                                     task={task}
@@ -397,8 +444,15 @@ const MyTasksPage = () => {
                         </div>
                     ) : (
                         <div className="text-center py-20 animate-fade-in">
-                            <h2 className="text-2xl font-semibold text-gray-700">ยังไม่มีงานที่ได้รับมอบหมาย</h2>
-                            <p className="text-gray-500 mt-2">เมื่องานใหม่เข้ามา ระบบจะแสดงผลที่หน้านี้</p>
+                            <h2 className="text-2xl font-semibold text-gray-700">
+                                {filterStatus === 'all' ? 'ยังไม่มีงานที่ได้รับมอบหมาย' : `ไม่พบงานที่มีสถานะ "${statusFilters.find(f => f.value === filterStatus)?.label}"`}
+                            </h2>
+                            <p className="text-gray-500 mt-2">
+                                {filterStatus === 'all'
+                                    ? 'เมื่องานใหม่เข้ามา ระบบจะแสดงผลที่หน้านี้'
+                                    : 'ลองเลือกฟิลเตอร์อื่นเพื่อดูงานในสถานะต่างๆ'
+                                }
+                            </p>
                         </div>
                     )
                 )}
