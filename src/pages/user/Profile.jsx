@@ -84,7 +84,6 @@ export default function UserProfile() {
             setError(err.response?.data?.message || "เกิดข้อผิดพลาดในการอัปเดต");
         } finally {
             setLoading(false);
-            setTimeout(() => navigate(0), 1000);
         }
     };
 
@@ -116,7 +115,6 @@ export default function UserProfile() {
             setError(err.response?.data?.message || "เปลี่ยนรหัสผ่านไม่สำเร็จ");
         } finally {
             setLoading(false);
-            setTimeout(() => navigate(0), 1000);
         }
     };
 
