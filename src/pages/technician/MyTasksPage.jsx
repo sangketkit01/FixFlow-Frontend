@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import {
     User, MapPin, Calendar, ClipboardList,
@@ -60,15 +61,18 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
 // ===         คอมโพเนนต์: TaskCard                       ===
 // ==========================================================
 const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
+    const navigate = useNavigate();
 
     const handleUpdateClick = (newStatus) => {
         onRequestUpdate(task._id, newStatus);
     };
 
+    const handleViewDetailsClick = () => {
+        navigate(`/technician/task-details/${task._id}`);
+    };
+
     const getStatusInfo = (status) => {
         switch (status) {
-            case 'pending':
-                return { icon: <ExclamationCircle className="w-5 h-5" />, color: 'bg-yellow-200 text-yellow-900', text: 'รอดำเนินการ' };
             case 'accepted':
                 return { icon: <Wrench className="w-5 h-5" />, color: 'bg-blue-200 text-blue-900', text: 'รับงานเรียบร้อย' };
             case 'fixing':
@@ -86,16 +90,6 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
         }
     };
 
-    // ฟังก์ชันสำหรับแสดงชื่อลูกค้าอย่างปลอดภัย (ใช้ task.userInfo ที่ดึงมาจาก backend)
-    const renderCustomerName = (userInfo) => {
-        if (!userInfo) {
-            return <span className="text-gray-500">ไม่มีข้อมูล</span>;
-        }
-        const fullName = `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim();
-        return fullName || <span className="text-gray-500">ไม่มีชื่อ</span>;
-    };
-
-    // ฟังก์ชันสำหรับแสดงวันที่อย่างปลอดภัย
     const formatCreationDate = (dateString) => {
         if (!dateString) {
             return <span className="text-gray-500">ไม่มีข้อมูล</span>;
@@ -130,23 +124,33 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
                         รับงาน
                     </button>
                 );
+
             case 'accepted':
                 return (
-                    <div className="flex space-x-2">
+                    <div className="space-y-2">
                         <button
-                            onClick={() => handleUpdateClick('fixing')}
-                            className="w-1/2 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                            onClick={handleViewDetailsClick}
+                            className="w-full flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
                         >
-                            <Play className="w-4 h-4 mr-2" />
-                            เริ่มซ่อม
+                            <Info className="w-5 h-5 mr-2" />
+                            ดูรายละเอียดงาน
                         </button>
-                        <button
-                            onClick={() => handleUpdateClick('request_canceling')}
-                            className="w-1/2 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-                        >
-                            <XCircle className="w-4 h-4 mr-2" />
-                            ขอยกเลิกงาน
-                        </button>
+                        <div className="flex space-x-2">
+                            <button
+                                onClick={() => handleUpdateClick('fixing')}
+                                className="flex-1 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
+                            >
+                                <Play className="w-5 h-5 mr-2" />
+                                เริ่มซ่อม
+                            </button>
+                            <button
+                                onClick={() => handleUpdateClick('request_canceling')}
+                                className="flex-1 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
+                            >
+                                <XCircle className="w-5 h-5 mr-2" />
+                                ขอยกเลิก
+                            </button>
+                        </div>
                     </div>
                 );
             case 'fixing':
@@ -238,6 +242,7 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
         </div>
     );
 };
+
 
 // ==========================================================
 // ===         คอมโพเนนต์หลัก: MyTasksPage                ===
@@ -352,13 +357,11 @@ const MyTasksPage = () => {
         setConfirmation(null);
     };
 
-    // ฟังก์ชันฟิลเตอร์งาน
     const filteredTasks = tasks.filter(task => {
         if (filterStatus === 'all') return true;
         return task.status === filterStatus;
     });
 
-    // ฟังก์ชันนับจำนวนงานแต่ละสถานะ
     const getStatusCount = (status) => {
         if (status === 'all') return tasks.length;
         return tasks.filter(task => task.status === status).length;
@@ -366,7 +369,6 @@ const MyTasksPage = () => {
 
     const statusFilters = [
         { value: 'all', label: 'ทั้งหมด', color: 'bg-gray-500 hover:bg-gray-600' },
-        { value: 'pending', label: 'รอดำเนินการ', color: 'bg-yellow-500 hover:bg-yellow-600' },
         { value: 'accepted', label: 'รับงานแล้ว', color: 'bg-blue-500 hover:bg-blue-600' },
         { value: 'fixing', label: 'กำลังซ่อม', color: 'bg-indigo-500 hover:bg-indigo-600' },
         { value: 'successful', label: 'ซ่อมสำเร็จ', color: 'bg-green-500 hover:bg-green-600' },
@@ -388,7 +390,6 @@ const MyTasksPage = () => {
                     </p>
                 </div>
 
-                {/* Filter Buttons */}
                 {!loading && !error && (
                     <div className="mb-8 animate-fade-in">
                         <div className="flex flex-wrap gap-3 justify-center">
