@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { User, MapPin, Calendar, ClipboardList, Loader, AlertTriangle, Info, CheckCircle } from 'lucide-react';
-import MainNav from '../../../components/user/MainNav';
+import Navtech from '../../../components/technician/Navtech';
 import baseUrl from '../../../constants/ServerConstant';
 
 // Component สำหรับแสดง Icon สถานะ
@@ -209,7 +209,7 @@ const PendingTasksPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-            <MainNav />
+            <Navtech />
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
                 <div className="text-center mb-12 animate-fade-in">

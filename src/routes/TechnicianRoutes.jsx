@@ -1,6 +1,7 @@
 import { ProtectedRoute } from "./AuthRoutes"
 import MyTasksPage from "../pages/technician/MyTasksPage"
 import PendingTasksPage from "../pages/technician/PendingTasks"
+import TaskDetailsPage from "../pages/technician/TaskDetailsPage"
 
 import { Routes, Route } from "react-router-dom"
 
@@ -20,5 +21,15 @@ export const TechnicianRoute = (
                 </ProtectedRoute>
             }
         />
+        
+        <Route path="/technician/task-details/:taskId"
+            element={
+                <ProtectedRoute role={"technician"}>
+                    <TaskDetailsPage />
+                </ProtectedRoute>
+            }
+        />
+
+
     </>
 )
