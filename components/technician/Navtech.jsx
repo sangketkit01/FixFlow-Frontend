@@ -31,7 +31,7 @@ function Navtech() {
     }, []);
 
     const navItems = [
-        { name: 'หน้าหลัก', icon: Home, href: '/technician/mytasks' },
+        { name: 'หน้าหลัก', icon: Home, href: '/technician/home' },
         { name: 'รับงาน', icon: Wrench, href: '/technician/pending-tasks' }
 
     ];

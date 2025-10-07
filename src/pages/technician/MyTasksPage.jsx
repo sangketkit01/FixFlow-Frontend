@@ -1,37 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
 import {
     User, MapPin, Calendar, ClipboardList,
     Clock, Wrench, CheckCircle, XCircle,
-    Loader, AlertTriangle, Play, ThumbsUp, ThumbsDown, Info
+    Loader, AlertTriangle, Play, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 
 import baseUrl from '../../../constants/ServerConstant';
 import Navtech from '../../../components/technician/Navtech';
 
-// Component สำหรับแสดง Icon สถานะ
+
+// Component for Exclamation Circle Icon
 const ExclamationCircle = ({ className }) => (
     <svg className={className} fill="currentColor" viewBox="0 0 20 20">
         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
     </svg>
 );
 
-// ==========================================================
-// ===         คอมโพเนนต์: Confirmation Modal             ===
-// ==========================================================
+// Confirmation Modal Component
 const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
     if (!details) return null;
 
-    const { title, message, confirmText, confirmColor } = details;
+    const { title, message, confirmText, confirmColor, icon: Icon } = details;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 animate-fade-in-fast">
             <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
                 <div className="flex items-center mb-4">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${confirmColor.replace('hover:', '')} bg-opacity-10`}>
-                        <Info className={`w-6 h-6 ${confirmColor.replace('bg-', 'text-').replace('hover:text-', 'text-')}`} />
+                        <Icon className={`w-6 h-6 ${confirmColor.replace('bg-', 'text-').replace('hover:text-', 'text-')}`} />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
                 </div>
@@ -57,47 +55,35 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
     );
 };
 
-// ==========================================================
-// ===         คอมโพเนนต์: TaskCard                       ===
-// ==========================================================
+// Task Card Component
 const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
     const navigate = useNavigate();
 
-    const handleUpdateClick = (newStatus) => {
+    const handleUpdateClick = (e, newStatus) => {
+        e.stopPropagation(); // ป้องกันไม่ให้ trigger การคลิกการ์ด
         onRequestUpdate(task._id, newStatus);
     };
 
-    const handleViewDetailsClick = () => {
+    const handleCardClick = () => {
         navigate(`/technician/task-details/${task._id}`);
     };
 
     const getStatusInfo = (status) => {
-        switch (status) {
-            case 'accepted':
-                return { icon: <Wrench className="w-5 h-5" />, color: 'bg-blue-200 text-blue-900', text: 'รับงานเรียบร้อย' };
-            case 'fixing':
-                return { icon: <Wrench className="w-5 h-5 animate-spin" />, color: 'bg-indigo-200 text-indigo-900', text: 'กำลังซ่อม' };
-            case 'successful':
-                return { icon: <CheckCircle className="w-5 h-5" />, color: 'bg-green-200 text-green-900', text: 'ซ่อมสำเร็จ' };
-            case 'request_canceling':
-                return { icon: <ExclamationCircle className="w-5 h-5" />, color: 'bg-orange-200 text-orange-900', text: 'คำขอยกเลิก' };
-            case 'cancelled':
-                return { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-200 text-red-900', text: 'ถูกยกเลิก' };
-            case 'failed':
-                return { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-300 text-red-900', text: 'ซ่อมไม่สำเร็จ' };
-            default:
-                return { icon: <Clock className="w-5 h-5" />, color: 'bg-gray-200 text-gray-900', text: 'ไม่ระบุ' };
-        }
+        const statusMap = {
+            accepted: { icon: <Wrench className="w-5 h-5" />, color: 'bg-blue-200 text-blue-900', text: 'รับงานเรียบร้อย' },
+            fixing: { icon: <Wrench className="w-5 h-5 animate-spin" />, color: 'bg-indigo-200 text-indigo-900', text: 'กำลังซ่อม' },
+            successful: { icon: <CheckCircle className="w-5 h-5" />, color: 'bg-green-200 text-green-900', text: 'ซ่อมสำเร็จ' },
+            request_canceling: { icon: <ExclamationCircle className="w-5 h-5" />, color: 'bg-orange-200 text-orange-900', text: 'คำขอยกเลิก' },
+            cancelled: { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-200 text-red-900', text: 'ถูกยกเลิก' },
+            failed: { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-300 text-red-900', text: 'ซ่อมไม่สำเร็จ' }
+        };
+        return statusMap[status] || { icon: <Clock className="w-5 h-5" />, color: 'bg-gray-200 text-gray-900', text: 'ไม่ระบุ' };
     };
 
     const formatCreationDate = (dateString) => {
-        if (!dateString) {
-            return <span className="text-gray-500">ไม่มีข้อมูล</span>;
-        }
+        if (!dateString) return <span className="text-gray-500">ไม่มีข้อมูล</span>;
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) {
-            return <span className="text-red-500">วันที่ไม่ถูกต้อง</span>;
-        }
+        if (isNaN(date.getTime())) return <span className="text-red-500">วันที่ไม่ถูกต้อง</span>;
         return date.toLocaleString('th-TH');
     };
 
@@ -117,7 +103,7 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
             case 'pending':
                 return (
                     <button
-                        onClick={() => handleUpdateClick('accepted')}
+                        onClick={(e) => handleUpdateClick(e, 'accepted')}
                         className="w-full flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
                     >
                         <CheckCircle className="w-4 h-4 mr-2" />
@@ -127,44 +113,36 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
 
             case 'accepted':
                 return (
-                    <div className="space-y-2">
+                    <div className="flex space-x-2">
                         <button
-                            onClick={handleViewDetailsClick}
-                            className="w-full flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
+                            onClick={(e) => handleUpdateClick(e, 'fixing')}
+                            className="flex-1 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
                         >
-                            <Info className="w-5 h-5 mr-2" />
-                            ดูรายละเอียดงาน
+                            <Play className="w-5 h-5 mr-2" />
+                            เริ่มซ่อม
                         </button>
-                        <div className="flex space-x-2">
-                            <button
-                                onClick={() => handleUpdateClick('fixing')}
-                                className="flex-1 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
-                            >
-                                <Play className="w-5 h-5 mr-2" />
-                                เริ่มซ่อม
-                            </button>
-                            <button
-                                onClick={() => handleUpdateClick('request_canceling')}
-                                className="flex-1 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
-                            >
-                                <XCircle className="w-5 h-5 mr-2" />
-                                ขอยกเลิก
-                            </button>
-                        </div>
+                        <button
+                            onClick={(e) => handleUpdateClick(e, 'request_canceling')}
+                            className="flex-1 flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
+                        >
+                            <XCircle className="w-5 h-5 mr-2" />
+                            ขอยกเลิก
+                        </button>
                     </div>
                 );
+
             case 'fixing':
                 return (
                     <div className="flex space-x-2">
                         <button
-                            onClick={() => handleUpdateClick('successful')}
+                            onClick={(e) => handleUpdateClick(e, 'successful')}
                             className="w-1/2 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
                         >
                             <ThumbsUp className="w-4 h-4 mr-2" />
                             ซ่อมสำเร็จ
                         </button>
                         <button
-                            onClick={() => handleUpdateClick('failed')}
+                            onClick={(e) => handleUpdateClick(e, 'failed')}
                             className="w-1/2 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
                         >
                             <ThumbsDown className="w-4 h-4 mr-2" />
@@ -172,30 +150,35 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
                         </button>
                     </div>
                 );
+
             case 'request_canceling':
                 return (
                     <div className="text-center text-sm text-orange-600 p-2 rounded-lg bg-orange-50 font-medium border border-orange-200">
                         รอแอดมินอนุมัติการยกเลิก
                     </div>
                 );
+
             case 'cancelled':
                 return (
                     <div className="text-center text-sm text-red-600 p-2 rounded-lg bg-red-50 font-medium border border-red-200">
                         งานถูกยกเลิกแล้ว
                     </div>
                 );
+
             case 'successful':
                 return (
                     <div className="text-center text-sm text-green-600 p-2 rounded-lg bg-green-50 font-medium border border-green-200">
                         งานเสร็จสิ้น - ซ่อมสำเร็จ
                     </div>
                 );
+
             case 'failed':
                 return (
                     <div className="text-center text-sm text-red-600 p-2 rounded-lg bg-red-50 font-medium border border-red-200">
                         งานเสร็จสิ้น - ซ่อมไม่สำเร็จ
                     </div>
                 );
+
             default:
                 return null;
         }
@@ -203,7 +186,8 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
 
     return (
         <div
-            className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animate-slide-up flex flex-col"
+            onClick={handleCardClick}
+            className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animate-slide-up flex flex-col cursor-pointer"
             style={{ animationDelay }}
         >
             <div className="flex-grow">
@@ -223,30 +207,30 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
                 <div className="space-y-3 text-sm text-gray-700">
                     <div className="flex items-center">
                         <User className="w-4 h-4 mr-3 text-blue-500" />
-                        <strong>ลูกค้า:</strong><span className="ml-2">{(task.username)}</span>
+                        <strong>ลูกค้า:</strong>
+                        <span className="ml-2">{task.username}</span>
                     </div>
                     <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-3 text-blue-500" />
-                        <strong>ที่อยู่:</strong><span className="ml-2">{task.address}</span>
+                        <strong>ที่อยู่:</strong>
+                        <span className="ml-2">{task.address}</span>
                     </div>
                     <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-3 text-blue-500" />
-                        <strong>แจ้งเมื่อ:</strong><span className="ml-2">{formatCreationDate(task.createdAt)}</span>
+                        <strong>แจ้งเมื่อ:</strong>
+                        <span className="ml-2">{formatCreationDate(task.createdAt)}</span>
                     </div>
                 </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="mt-6 pt-4 border-t border-gray-200" onClick={(e) => e.stopPropagation()}>
                 {renderActionButtons()}
             </div>
         </div>
     );
 };
 
-
-// ==========================================================
-// ===         คอมโพเนนต์หลัก: MyTasksPage                ===
-// ==========================================================
+// Main Component
 const MyTasksPage = () => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -258,7 +242,6 @@ const MyTasksPage = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const token = localStorage.getItem('authToken');
                 const response = await axios.get(baseUrl + '/technician/tasks/my-tasks', {
                     withCredentials: true
                 });
@@ -298,52 +281,48 @@ const MyTasksPage = () => {
     };
 
     const requestConfirmation = (taskId, newStatus) => {
-        let details = {};
-        switch (newStatus) {
-            case 'accepted':
-                details = {
-                    title: 'ยืนยันการรับงาน?',
-                    message: 'คุณต้องการรับงานนี้ใช่หรือไม่?',
-                    confirmText: 'ใช่, รับงาน',
-                    confirmColor: 'bg-purple-500 hover:bg-purple-600',
-                };
-                break;
-            case 'fixing':
-                details = {
-                    title: 'ยืนยันการเริ่มดำเนินการ?',
-                    message: 'คุณต้องการเริ่มดำเนินการซ่อมงานนี้ใช่หรือไม่?',
-                    confirmText: 'ใช่, เริ่มเลย',
-                    confirmColor: 'bg-blue-500 hover:bg-blue-600',
-                };
-                break;
-            case 'request_canceling':
-                details = {
-                    title: 'ยืนยันการขอยกเลิกงาน?',
-                    message: 'คุณต้องการส่งคำขอยกเลิกงานนี้ไปยังแอดมินใช่หรือไม่? งานจะถูกยกเลิกเมื่อแอดมินอนุมัติ',
-                    confirmText: 'ใช่, ขอยกเลิก',
-                    confirmColor: 'bg-orange-500 hover:bg-orange-600',
-                };
-                break;
-            case 'successful':
-                details = {
-                    title: 'ยืนยันการซ่อมสำเร็จ?',
-                    message: 'คุณได้ทำการซ่อมงานนี้เสร็จสิ้นเรียบร้อยแล้วใช่หรือไม่?',
-                    confirmText: 'ซ่อมสำเร็จ',
-                    confirmColor: 'bg-green-500 hover:bg-green-600',
-                };
-                break;
-            case 'failed':
-                details = {
-                    title: 'ยืนยันการซ่อมไม่สำเร็จ?',
-                    message: 'คุณต้องการบันทึกว่างานนี้ซ่อมไม่สำเร็จใช่หรือไม่?',
-                    confirmText: 'ใช่, ซ่อมไม่สำเร็จ',
-                    confirmColor: 'bg-red-500 hover:bg-red-600',
-                };
-                break;
-            default:
-                return;
+        const confirmationDetails = {
+            accepted: {
+                title: 'ยืนยันการรับงาน?',
+                message: 'คุณต้องการรับงานนี้ใช่หรือไม่?',
+                confirmText: 'ใช่, รับงาน',
+                confirmColor: 'bg-purple-500 hover:bg-purple-600',
+                icon: CheckCircle,
+            },
+            fixing: {
+                title: 'ยืนยันการเริ่มดำเนินการ?',
+                message: 'คุณต้องการเริ่มดำเนินการซ่อมงานนี้ใช่หรือไม่?',
+                confirmText: 'ใช่, เริ่มเลย',
+                confirmColor: 'bg-blue-500 hover:bg-blue-600',
+                icon: Play,
+            },
+            request_canceling: {
+                title: 'ยืนยันการขอยกเลิกงาน?',
+                message: 'คุณต้องการส่งคำขอยกเลิกงานนี้ไปยังแอดมินใช่หรือไม่? งานจะถูกยกเลิกเมื่อแอดมินอนุมัติ',
+                confirmText: 'ใช่, ขอยกเลิก',
+                confirmColor: 'bg-orange-500 hover:bg-orange-600',
+                icon: XCircle,
+            },
+            successful: {
+                title: 'ยืนยันการซ่อมสำเร็จ?',
+                message: 'คุณได้ทำการซ่อมงานนี้เสร็จสิ้นเรียบร้อยแล้วใช่หรือไม่?',
+                confirmText: 'ซ่อมสำเร็จ',
+                confirmColor: 'bg-green-500 hover:bg-green-600',
+                icon: ThumbsUp,
+            },
+            failed: {
+                title: 'ยืนยันการซ่อมไม่สำเร็จ?',
+                message: 'คุณต้องการบันทึกว่างานนี้ซ่อมไม่สำเร็จใช่หรือไม่?',
+                confirmText: 'ใช่, ซ่อมไม่สำเร็จ',
+                confirmColor: 'bg-red-500 hover:bg-red-600',
+                icon: ThumbsDown,
+            }
+        };
+
+        const details = confirmationDetails[newStatus];
+        if (details) {
+            setConfirmation({ ...details, taskId, newStatus });
         }
-        setConfirmation({ ...details, taskId, newStatus });
     };
 
     const handleConfirm = () => {
@@ -422,7 +401,9 @@ const MyTasksPage = () => {
                 {error && !loading && (
                     <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md max-w-2xl mx-auto animate-slide-up">
                         <div className="flex">
-                            <div className="py-1"><AlertTriangle className="h-6 w-6 text-red-500 mr-4" /></div>
+                            <div className="py-1">
+                                <AlertTriangle className="h-6 w-6 text-red-500 mr-4" />
+                            </div>
                             <div>
                                 <p className="font-bold text-lg">เกิดข้อผิดพลาด!</p>
                                 <p className="text-md">{error}</p>
@@ -447,7 +428,10 @@ const MyTasksPage = () => {
                     ) : (
                         <div className="text-center py-20 animate-fade-in">
                             <h2 className="text-2xl font-semibold text-gray-700">
-                                {filterStatus === 'all' ? 'ยังไม่มีงานที่ได้รับมอบหมาย' : `ไม่พบงานที่มีสถานะ "${statusFilters.find(f => f.value === filterStatus)?.label}"`}
+                                {filterStatus === 'all'
+                                    ? 'ยังไม่มีงานที่ได้รับมอบหมาย'
+                                    : `ไม่พบงานที่มีสถานะ "${statusFilters.find(f => f.value === filterStatus)?.label}"`
+                                }
                             </h2>
                             <p className="text-gray-500 mt-2">
                                 {filterStatus === 'all'
@@ -467,8 +451,14 @@ const MyTasksPage = () => {
             />
 
             <style>{`
-                @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-                @keyframes fade-in-fast { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes fade-in { 
+                    from { opacity: 0; } 
+                    to { opacity: 1; } 
+                }
+                @keyframes fade-in-fast { 
+                    from { opacity: 0; } 
+                    to { opacity: 1; } 
+                }
                 @keyframes slide-up {
                     from { opacity: 0; transform: translateY(30px); }
                     to { opacity: 1; transform: translateY(0); }

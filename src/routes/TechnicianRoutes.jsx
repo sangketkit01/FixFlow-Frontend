@@ -7,7 +7,7 @@ import { Routes, Route } from "react-router-dom"
 
 export const TechnicianRoute = (
     <>
-        <Route path="/technician/mytasks"
+        <Route path="/technician/home"
             element={
                 <ProtectedRoute role={"technician"}>
                     <MyTasksPage />
@@ -21,7 +21,7 @@ export const TechnicianRoute = (
                 </ProtectedRoute>
             }
         />
-        
+
         <Route path="/technician/task-details/:taskId"
             element={
                 <ProtectedRoute role={"technician"}>
