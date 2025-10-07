@@ -98,7 +98,7 @@ function Navtech() {
                                 />
                             </div>
                             <div className="text-left">
-                                <p className="text-sm font-semibold text-gray-800">{user && user.name ? user.name : "Unknown"}</p>
+                                <p className="text-sm font-semibold text-gray-800">{user && user.full_name ? user.full_name : "Unknown"}</p>
                                 <p className="text-xs text-gray-500">User Account</p>
                             </div>
                         </button>
