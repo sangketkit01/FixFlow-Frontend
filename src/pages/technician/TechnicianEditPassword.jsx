@@ -48,6 +48,7 @@ export default function TechnicianChangePassword() {
   return (
     <>
       <Navtech />
+      <br />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-16 px-6">
         <div className="max-w-lg mx-auto bg-white rounded-2xl shadow-md p-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">

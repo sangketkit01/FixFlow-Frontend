@@ -23,6 +23,9 @@ export default function TechnicianProfile() {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+
 
     useEffect(() => {
         const fetchTechnician = async () => {
@@ -78,7 +81,8 @@ export default function TechnicianProfile() {
             });
 
             setMessage("อัปเดตข้อมูลสำเร็จ");
-            setTimeout(() => navigate(0), 1000);
+            setModalMessage("ข้อมูลของคุณได้รับการอัปเดตเรียบร้อยแล้ว");
+            setShowModal(true);
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.message || "อัปเดตข้อมูลไม่สำเร็จ");
@@ -90,6 +94,8 @@ export default function TechnicianProfile() {
     return (
         <>
             <Navtech />
+            <br />
+            <br />
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-10 px-6">
                 <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-8">
                     <h2 className="text-3xl font-bold text-gray-800 mb-6">แก้ไขข้อมูลช่าง</h2>
@@ -170,6 +176,43 @@ export default function TechnicianProfile() {
                         </div>
                     </form>
                 </div>
+                {showModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                        <div className="bg-white rounded-2xl shadow-2xl p-8 w-80 text-center animate-fade-in">
+                            {/* Success Icon */}
+                            <div className="flex justify-center mb-4">
+                                <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-green-100">
+                                    <svg
+                                        className="w-10 h-10 text-green-500 animate-bounce-in"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="3"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">สำเร็จ!</h2>
+                            <p className="text-gray-600 mb-6">{modalMessage}</p>
+
+                            <button
+                                onClick={() => {
+                                    setShowModal(false);
+                                    navigate(0); // รีเฟรชหน้าเมื่อกดตกลง
+                                }}
+                                className="w-full py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:opacity-90 transition"
+                            >
+                                ตกลง
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );
