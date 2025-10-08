@@ -1,14 +1,15 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-
 export const ProtectedRoute = ({ children, role }) => {
-    const { user, loading } = useAuth();
+    const { user, authReady } = useAuth();
 
-    console.log("ProtectedRoute check:", { user, requiredRole: role });
-
-    if (loading) {
-        return <div>Loading...</div>;
+    if (!authReady) {
+        return (
+            <div className="flex justify-center items-center h-screen text-gray-500">
+                กำลังตรวจสอบสิทธิ์...
+            </div>
+        );
     }
 
     if (!user) {
@@ -23,6 +24,3 @@ export const ProtectedRoute = ({ children, role }) => {
 
     return children;
 };
-
-
-
