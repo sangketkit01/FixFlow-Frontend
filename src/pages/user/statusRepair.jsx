@@ -15,11 +15,10 @@ const StatusRepair = () => {
     const [filterStatus, setFilterStatus] = useState("all");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-
     const statusConfig = {
-        pending: {
-            label: "รอดำเนินการ",
-            color: "bg-yellow-100 text-yellow-800 border-yellow-300",
+        payment: {
+            label: "รอการชำระเงิน",
+            color: "bg-purple-100 text-purple-800 border-purple-300",
             icon: Clock,
             iconColor: "text-yellow-600",
         },
@@ -35,13 +34,27 @@ const StatusRepair = () => {
             icon: AlertCircle,
             iconColor: "text-purple-600",
         },
+        successful: {
+            label: "ซ่อมสำเร็จ",
+            color: "bg-green-100 text-green-800 border-green-300",
+            icon: CheckCircle,
+            iconColor: "text-green-600",
+        },
         cancelled: {
             label: "ยกเลิก",
             color: "bg-red-100 text-red-800 border-red-300",
             icon: XCircle,
             iconColor: "text-red-600",
         },
+        pending: {
+            label: "รอดำเนินการ",
+            color: "bg-gray-100 text-gray-800 border-gray-300",
+            icon: Clock,
+            iconColor: "text-gray-600",
+        },
     };
+
+
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -100,20 +113,20 @@ const StatusRepair = () => {
                             />
                         </div>
 
-                        <div className="relative">
-                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <select
-                                value={filterStatus}
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none"
-                            >
-                                <option value="all">ทั้งหมด</option>
-                                <option value="pending">รอดำเนินการ</option>
-                                <option value="accepted">รอช่างเข้าซ่อม</option>
-                                <option value="fixing">กำลังซ่อม</option>
-                                <option value="cancelled">ยกเลิก</option>
-                            </select>
-                        </div>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none"
+                        >
+                            <option value="all">ทั้งหมด</option>
+                            <option value="pending">รอดำเนินการ</option>
+                            <option value="accepted">รอช่างเข้าซ่อม</option>
+                            <option value="fixing">กำลังซ่อม</option>
+                            <option value="payment">รอการชำระเงิน</option>
+                            <option value="successful">ซ่อมสำเร็จ</option>
+                            <option value="cancelled">ยกเลิก</option>
+                        </select>
+
                     </div>
 
                     {/* Task Cards */}
@@ -143,7 +156,7 @@ const StatusRepair = () => {
                                             {task.task_type_id?.name || "ไม่ระบุ"}
                                         </h3>
                                         <span
-                                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${status.color}`}
+                                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${status.color === undefined ? 'bg-gray-100 text-gray-800 border-gray-300' : status.color}`}
                                         >
                                             <StatusIcon className={`w-4 h-4 mr-1 ${status.iconColor}`} />
                                             {status.label}
