@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Home, Wrench, Activity, Clock } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
-function MainNav() {
+function AdminNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -17,7 +17,7 @@ function MainNav() {
 
   const navItems = [
     { name: 'หน้าหลัก', icon: Home, href: '/' },
-    { name: 'แจ้งซ่อม', icon: Wrench, href: '/edit-tech' },
+    { name: 'จัดการข้อมูลช่าง', icon: Wrench, href: '/edit-tech' },
     { name: 'สถานะการซ่อม', icon: Activity, href: '/statusRepair' },
     { name: 'ประวัติการซ่อม', icon: Clock, href: '/historyRepair' }
   ];
@@ -155,4 +155,4 @@ function MainNav() {
   );
 }
 
-export default MainNav;
+export default AdminNav;
