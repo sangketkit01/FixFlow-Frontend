@@ -88,6 +88,7 @@ function Navtech() {
                             onClick={() => setIsProfileOpen(!isProfileOpen)}
                             className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg hover:bg-purple-50 cursor-pointer transition-colors duration-200"
                         >
+
                             <div className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg hover:bg-purple-50 cursor-pointer transition-colors duration-200">
                                 <div className="w-10 h-10 rounded-full overflow-hidden">
                                     <img
@@ -109,6 +110,20 @@ function Navtech() {
                                     </p>
                                     <p className="text-xs text-gray-500">Technician Account</p>
                                 </div>
+
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                                <img
+                                    src={user && user.profile_path ? baseUrl + "/" + user.profile_path : baseUrl + "/images/user_profile.png"}
+                                    alt="User Avatar"
+                                    width={40}
+                                    height={40}
+                                    className="w-10 h-10 rounded-full object-cover"
+                                />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-sm font-semibold text-gray-800">{user && user.full_name ? user.full_name : "Unknown"}</p>
+                                <p className="text-xs text-gray-500">User Account</p>
+
                             </div>
 
                         </button>

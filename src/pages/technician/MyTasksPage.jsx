@@ -55,6 +55,65 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
     );
 };
 
+
+
+const SuccessModal = ({ message, onClose }) => {
+    if (!message) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 animate-fade-in-fast">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
+                <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-green-100">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800">สำเร็จ!</h2>
+                </div>
+
+                <p className="text-gray-600 mb-8 ml-16">{message}</p>
+
+                <div className="flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 text-white font-semibold rounded-lg bg-green-500 hover:bg-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ErrorModal = ({ message, onClose }) => {
+    if (!message) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 animate-fade-in-fast">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
+                <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-red-100">
+                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800">เกิดข้อผิดพลาด</h2>
+                </div>
+
+                <p className="text-gray-600 mb-8 ml-16">{message}</p>
+
+                <div className="flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 text-white font-semibold rounded-lg bg-red-500 hover:bg-red-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
 // Task Card Component
 const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
     const navigate = useNavigate();
@@ -69,16 +128,53 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
     };
 
     const getStatusInfo = (status) => {
-        const statusMap = {
-            accepted: { icon: <Wrench className="w-5 h-5" />, color: 'bg-blue-200 text-blue-900', text: 'รับงานเรียบร้อย' },
-            fixing: { icon: <Wrench className="w-5 h-5 animate-spin" />, color: 'bg-indigo-200 text-indigo-900', text: 'กำลังซ่อม' },
-            successful: { icon: <CheckCircle className="w-5 h-5" />, color: 'bg-green-200 text-green-900', text: 'ซ่อมสำเร็จ' },
-            request_canceling: { icon: <ExclamationCircle className="w-5 h-5" />, color: 'bg-orange-200 text-orange-900', text: 'คำขอยกเลิก' },
-            cancelled: { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-200 text-red-900', text: 'ถูกยกเลิก' },
-            failed: { icon: <XCircle className="w-5 h-5" />, color: 'bg-red-300 text-red-900', text: 'ซ่อมไม่สำเร็จ' }
-        };
-        return statusMap[status] || { icon: <Clock className="w-5 h-5" />, color: 'bg-gray-200 text-gray-900', text: 'ไม่ระบุ' };
+        switch (status) {
+            case "pending":
+                return {
+                    icon: <ExclamationCircle className="w-5 h-5" />,
+                    color: "bg-yellow-200 text-yellow-900",
+                    text: "รอดำเนินการ",
+                };
+            case "accepted":
+                return {
+                    icon: <Wrench className="w-5 h-5" />,
+                    color: "bg-blue-200 text-blue-900",
+                    text: "รับงานเรียบร้อย",
+                };
+            case "fixing":
+                return {
+                    icon: <Wrench className="w-5 h-5 animate-spin" />,
+                    color: "bg-indigo-200 text-indigo-900",
+                    text: "กำลังซ่อม",
+                };
+            case "payment":
+                return {
+                    icon: <Clock className="w-5 h-5" />,
+                    color: "bg-purple-200 text-purple-900",
+                    text: "รอการชำระเงิน",
+                };
+            case "successful":
+                return {
+                    icon: <CheckCircle className="w-5 h-5" />,
+                    color: "bg-green-200 text-green-900",
+                    text: "ซ่อมสำเร็จ",
+                };
+            case "cancelled":
+                return {
+                    icon: <XCircle className="w-5 h-5" />,
+                    color: "bg-red-200 text-red-900",
+                    text: "ถูกยกเลิก",
+                };
+            default:
+                return {
+                    icon: <Clock className="w-5 h-5" />,
+                    color: "bg-gray-200 text-gray-900",
+                    text: "ไม่ระบุ",
+                };
+        }
     };
+
+
 
     const formatCreationDate = (dateString) => {
         if (!dateString) return <span className="text-gray-500">ไม่มีข้อมูล</span>;
@@ -86,6 +182,7 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
         if (isNaN(date.getTime())) return <span className="text-red-500">วันที่ไม่ถูกต้อง</span>;
         return date.toLocaleString('th-TH');
     };
+
 
     const statusInfo = getStatusInfo(task.status);
 
@@ -101,15 +198,8 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
 
         switch (task.status) {
             case 'pending':
-                return (
-                    <button
-                        onClick={(e) => handleUpdateClick(e, 'accepted')}
-                        className="w-full flex items-center justify-center bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-                    >
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        รับงาน
-                    </button>
-                );
+                // (เหมือนเดิม)
+                break;
 
             case 'accepted':
                 return (
@@ -133,35 +223,15 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
 
             case 'fixing':
                 return (
-                    <div className="flex space-x-2">
-                        <button
-                            onClick={(e) => handleUpdateClick(e, 'successful')}
-                            className="w-1/2 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-                        >
-                            <ThumbsUp className="w-4 h-4 mr-2" />
-                            ซ่อมสำเร็จ
-                        </button>
-                        <button
-                            onClick={(e) => handleUpdateClick(e, 'failed')}
-                            className="w-1/2 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-                        >
-                            <ThumbsDown className="w-4 h-4 mr-2" />
-                            ซ่อมไม่สำเร็จ
-                        </button>
+                    <div className="text-center text-sm text-indigo-600 p-2 rounded-lg bg-indigo-50 font-medium border border-indigo-200">
+                        อยู่ระหว่างการซ่อม
                     </div>
                 );
 
-            case 'request_canceling':
+            case 'payment':
                 return (
-                    <div className="text-center text-sm text-orange-600 p-2 rounded-lg bg-orange-50 font-medium border border-orange-200">
-                        รอแอดมินอนุมัติการยกเลิก
-                    </div>
-                );
-
-            case 'cancelled':
-                return (
-                    <div className="text-center text-sm text-red-600 p-2 rounded-lg bg-red-50 font-medium border border-red-200">
-                        งานถูกยกเลิกแล้ว
+                    <div className="text-center text-sm text-purple-600 p-2 rounded-lg bg-purple-50 font-medium border border-purple-200">
+                        รอลูกค้าชำระเงิน
                     </div>
                 );
 
@@ -179,10 +249,24 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
                     </div>
                 );
 
+            case 'request_canceling':
+                return (
+                    <div className="text-center text-sm text-orange-600 p-2 rounded-lg bg-orange-50 font-medium border border-orange-200">
+                        รอแอดมินอนุมัติการยกเลิก
+                    </div>
+                );
+
+            case 'cancelled':
+                return (
+                    <div className="text-center text-sm text-red-600 p-2 rounded-lg bg-red-50 font-medium border border-red-200">
+                        งานถูกยกเลิกแล้ว
+                    </div>
+                );
+
             default:
                 return null;
         }
-    };
+    }
 
     return (
         <div
@@ -238,6 +322,8 @@ const MyTasksPage = () => {
     const [confirmation, setConfirmation] = useState(null);
     const [updatingTaskId, setUpdatingTaskId] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all');
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -274,7 +360,7 @@ const MyTasksPage = () => {
             );
         } catch (err) {
             console.error("Failed to update task status:", err);
-            alert(`เกิดข้อผิดพลาดในการอัปเดตสถานะ: ${err.response?.data?.message || err.message}`);
+            setErrorMessage(`เกิดข้อผิดพลาดในการอัปเดตสถานะ: ${err.response?.data?.message || err.message}`);
         } finally {
             setUpdatingTaskId(null);
         }
@@ -296,17 +382,24 @@ const MyTasksPage = () => {
                 confirmColor: 'bg-blue-500 hover:bg-blue-600',
                 icon: Play,
             },
+            payment: {
+                title: 'ยืนยันการซ่อมเสร็จสิ้น?',
+                message: 'คุณต้องการเปลี่ยนสถานะเป็น “รอลูกค้าชำระเงิน” หรือไม่?',
+                confirmText: 'ใช่, เสร็จสิ้นการซ่อม',
+                confirmColor: 'bg-yellow-500 hover:bg-yellow-600',
+                icon: Clock,
+            },
             request_canceling: {
                 title: 'ยืนยันการขอยกเลิกงาน?',
-                message: 'คุณต้องการส่งคำขอยกเลิกงานนี้ไปยังแอดมินใช่หรือไม่? งานจะถูกยกเลิกเมื่อแอดมินอนุมัติ',
+                message: 'คุณต้องการส่งคำขอยกเลิกงานนี้ไปยังแอดมินใช่หรือไม่?',
                 confirmText: 'ใช่, ขอยกเลิก',
                 confirmColor: 'bg-orange-500 hover:bg-orange-600',
                 icon: XCircle,
             },
             successful: {
-                title: 'ยืนยันการซ่อมสำเร็จ?',
-                message: 'คุณได้ทำการซ่อมงานนี้เสร็จสิ้นเรียบร้อยแล้วใช่หรือไม่?',
-                confirmText: 'ซ่อมสำเร็จ',
+                title: 'ยืนยันการชำระเงิน?',
+                message: 'ลูกค้าชำระเงินเรียบร้อยแล้วใช่หรือไม่?',
+                confirmText: 'ใช่, ชำระเงินแล้ว',
                 confirmColor: 'bg-green-500 hover:bg-green-600',
                 icon: ThumbsUp,
             },
@@ -316,13 +409,15 @@ const MyTasksPage = () => {
                 confirmText: 'ใช่, ซ่อมไม่สำเร็จ',
                 confirmColor: 'bg-red-500 hover:bg-red-600',
                 icon: ThumbsDown,
-            }
+            },
         };
 
-        const details = confirmationDetails[newStatus];
-        if (details) {
-            setConfirmation({ ...details, taskId, newStatus });
-        }
+        setConfirmation({
+            taskId,
+            newStatus,
+            ...confirmationDetails[newStatus],
+        });
+
     };
 
     const handleConfirm = () => {
@@ -448,7 +543,10 @@ const MyTasksPage = () => {
                 details={confirmation}
                 onConfirm={handleConfirm}
                 onCancel={handleCancel}
+
             />
+            <SuccessModal message={successMessage} onClose={() => setSuccessMessage(null)} />
+            <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
 
             <style>{`
                 @keyframes fade-in { 
