@@ -3,6 +3,9 @@ import axios from 'axios';
 import { User, MapPin, Calendar, ClipboardList, Loader, AlertTriangle, Info, CheckCircle } from 'lucide-react';
 import Navtech from '../../../components/technician/Navtech';
 import baseUrl from '../../../constants/ServerConstant';
+import { Modal } from 'bootstrap';
+
+
 
 // Component สำหรับแสดง Icon สถานะ
 const ExclamationCircle = ({ className }) => (
@@ -43,6 +46,62 @@ const ConfirmationModal = ({ details, onConfirm, onCancel }) => {
                         className={`px-6 py-2 text-white font-semibold rounded-lg ${confirmColor} transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
                     >
                         {confirmText}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SuccessModal = ({ message, onClose }) => {
+    if (!message) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 animate-fade-in-fast">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
+                <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-green-100">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800">สำเร็จ!</h2>
+                </div>
+
+                <p className="text-gray-600 mb-8 ml-16">{message}</p>
+
+                <div className="flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 text-white font-semibold rounded-lg bg-green-500 hover:bg-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ErrorModal = ({ message, onClose }) => {
+    if (!message) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 animate-fade-in-fast">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 m-4 max-w-md w-full transform animate-modal-pop-in">
+                <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-red-100">
+                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800">เกิดข้อผิดพลาด</h2>
+                </div>
+
+                <p className="text-gray-600 mb-8 ml-16">{message}</p>
+
+                <div className="flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 text-white font-semibold rounded-lg bg-red-500 hover:bg-red-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                        ปิด
                     </button>
                 </div>
             </div>
@@ -140,6 +199,9 @@ const PendingTasksPage = () => {
     const [confirmation, setConfirmation] = useState(null);
     const [acceptingTaskId, setAcceptingTaskId] = useState(null);
 
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+
     useEffect(() => {
         fetchPendingTasks();
     }, []);
@@ -187,10 +249,10 @@ const PendingTasksPage = () => {
             setTasks(currentTasks => currentTasks.filter(task => task._id !== taskId));
 
             // แสดงข้อความสำเร็จ
-            alert('รับงานสำเร็จ! งานถูกย้ายไปยังหน้า "งานของฉัน" แล้ว');
+            setSuccessMessage('รับงานสำเร็จ! งานถูกย้ายไปยังหน้า "งานของฉัน" แล้ว');
         } catch (err) {
             console.error("Failed to accept task:", err);
-            alert(`เกิดข้อผิดพลาดในการรับงาน: ${err.response?.data?.message || err.message}`);
+            setErrorMessage(`เกิดข้อผิดพลาดในการรับงาน: ${err.response?.data?.message || err.message}`);
         } finally {
             setAcceptingTaskId(null);
         }
@@ -271,6 +333,10 @@ const PendingTasksPage = () => {
                 onConfirm={handleConfirm}
                 onCancel={handleCancel}
             />
+
+            <SuccessModal message={successMessage} onClose={() => setSuccessMessage(null)} />
+            <ErrorModal message={errorMessage} onClose={() => setErrorMessage(null)} />
+
 
             <style>{`
                 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
