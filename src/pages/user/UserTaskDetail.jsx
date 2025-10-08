@@ -28,6 +28,8 @@ const getStatusInfo = (status) => {
             return { color: "bg-green-200 text-green-900", text: "ซ่อมสำเร็จ" };
         case "cancelled":
             return { color: "bg-red-200 text-red-900", text: "ยกเลิกแล้ว" };
+        case "pending":
+            return { color: "bg-gray-200 text-gray-900", text: "รอดำเนินการ" };
         default:
             return { color: "bg-gray-200 text-gray-800", text: "ไม่ระบุ" };
     }
@@ -44,12 +46,14 @@ export default function UserTaskDetail() {
     const [previewImage, setPreviewImage] = useState(null);
     const [uploading, setUploading] = useState(false);
 
+    const [taskType, setTaskType] = useState(null);
+
     const [newSlip, setNewSlip] = useState(null);
     const [previewSlip, setPreviewSlip] = useState(null);
     const [uploadingSlip, setUploadingSlip] = useState(false);
 
     const [loading, setLoading] = useState(true);
-    const [modal, setModal] = useState({ show: false, title: "", message: "" });
+    const [modal, setModal] = useState({ show: false, title: "", type: "success", message: "" });
     const [canceling, setCanceling] = useState(false);
 
     const fetchTask = async () => {
@@ -61,6 +65,7 @@ export default function UserTaskDetail() {
             setImages(res.data.images || []);
             setPayment(res.data.payment || null);
             setPaymentDetails(res.data.paymentDetails || []);
+            setTaskType(res.data.taskType || null);
         } catch (err) {
             console.error("❌ โหลดข้อมูลงานไม่สำเร็จ:", err);
         } finally {
@@ -103,6 +108,7 @@ export default function UserTaskDetail() {
             setModal({
                 show: true,
                 title: "เกิดข้อผิดพลาด",
+                type: "error",
                 message: err.response?.data?.message || "ไม่สามารถอัปโหลดรูปภาพได้",
             });
         } finally {
@@ -125,6 +131,7 @@ export default function UserTaskDetail() {
             setModal({
                 show: true,
                 title: "ส่งสลิปสำเร็จ",
+                type: "success",
                 message: "สลิปของคุณถูกส่งไปให้ช่างตรวจสอบแล้ว",
             });
             setNewSlip(null);
@@ -135,6 +142,7 @@ export default function UserTaskDetail() {
             setModal({
                 show: true,
                 title: "เกิดข้อผิดพลาด",
+                type: "error",
                 message: err.response?.data?.message || "อัปโหลดสลิปไม่สำเร็จ",
             });
         } finally {
@@ -151,6 +159,7 @@ export default function UserTaskDetail() {
             setModal({
                 show: true,
                 title: "ลบสลิปสำเร็จ",
+                type: "success",
                 message: "สลิปของคุณถูกลบเรียบร้อยแล้ว",
             });
             fetchTask();
@@ -158,6 +167,7 @@ export default function UserTaskDetail() {
             console.error("❌ Delete slip error:", err);
             setModal({
                 show: true,
+                type: "error",
                 title: "เกิดข้อผิดพลาด",
                 message: "ไม่สามารถลบสลิปได้",
             });
@@ -173,6 +183,7 @@ export default function UserTaskDetail() {
             setModal({
                 show: true,
                 title: "ส่งคำขอยกเลิกแล้ว",
+                type: "success",
                 message: "ช่างจะตรวจสอบคำขอยกเลิกของคุณ",
             });
             fetchTask();
@@ -181,6 +192,7 @@ export default function UserTaskDetail() {
             setModal({
                 show: true,
                 title: "เกิดข้อผิดพลาด",
+                type: "error",
                 message: "ไม่สามารถส่งคำขอยกเลิกได้",
             });
         } finally {
@@ -200,14 +212,14 @@ export default function UserTaskDetail() {
             <MainNav />
             <main className="max-w-6xl mx-auto pt-24 pb-16 px-6">
                 <div className="bg-white rounded-2xl shadow-xl p-8">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold text-gray-800">{task.title}</h1>
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-2xl font-bold text-gray-800">{taskType.name}</h3>
                         <span className={`px-3 py-1 rounded-full font-semibold text-sm ${statusInfo.color}`}>
                             {statusInfo.text}
                         </span>
                     </div>
-
-                    <p className="text-gray-600 mb-4">{task.detail || "ไม่มีรายละเอียดเพิ่มเติม"}</p>
+                    <h4 className="font-medium text-gray-500 text-xl">{task.title}</h4>
+                    <p className="text-gray-600 mb-4 mt-4">{task.detail || "ไม่มีรายละเอียดเพิ่มเติม"}</p>
                     <div className="space-y-2 text-gray-700">
                         <div className="flex items-center gap-2"><User className="w-5 h-5 text-blue-500" /> {task.username}</div>
                         <div className="flex items-center gap-2"><MapPin className="w-5 h-5 text-blue-500" /> {task.address}, {task.district}, {task.province}</div>
@@ -298,7 +310,7 @@ export default function UserTaskDetail() {
                                 {payment.slip_image_path ? (
                                     <div className="relative mb-3">
                                         <img
-                                            src={baseUrl + "/images/payment/" + payment.slip_image_path}
+                                            src={baseUrl + payment.slip_image_path}
                                             alt="slip"
                                             className="w-full max-w-sm rounded-lg border shadow-md"
                                         />
@@ -335,8 +347,31 @@ export default function UserTaskDetail() {
                                 )}
                             </div>
                         )}
+
+                        {task.status === "successful" && (
+                            <div>
+                                <div>
+                                    <h4 className="font-semibold text-gray-700 mb-2">หลักฐานการโอนเงิน:</h4>
+                                    {payment.slip_image_path ? (
+                                        <div className="flex items-center justify-center mb-3">
+                                            <img
+                                                src={baseUrl + payment.slip_image_path}
+                                                alt="slip"
+                                                className="w-full max-w-sm rounded-lg border shadow-md"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-center h-[200px] text-center text-gray-400 font-medium">
+                                            <h2>ยังไม่มีหลักฐานการโอนเงิน</h2>
+                                        </div>
+
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
+
 
                 {/* ❌ Cancel Task */}
                 {(task.status === "accepted" || task.status === "fixing") && (
@@ -356,18 +391,27 @@ export default function UserTaskDetail() {
                 {modal.show && (
                     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
                         <div className="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm w-full">
-                            <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-3" />
+                            {modal.type === "success" ? (
+                                <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-3" />
+                            ) : (
+                                <XCircle className="w-14 h-14 text-red-500 mx-auto mb-3" />
+                            )}
+
                             <h2 className="text-xl font-bold text-gray-800 mb-2">{modal.title}</h2>
                             <p className="text-gray-600 mb-6">{modal.message}</p>
                             <button
                                 onClick={() => window.location.reload()}
-                                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold"
+                                className={`px-4 py-2 ${modal.type === "success"
+                                    ? "bg-purple-600 hover:bg-purple-700"
+                                    : "bg-red-600 hover:bg-red-700"
+                                    } text-white rounded-lg font-semibold`}
                             >
                                 ปิด
                             </button>
                         </div>
                     </div>
                 )}
+
             </main>
         </div>
     );

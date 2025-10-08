@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import baseUrl from "../../../constants/ServerConstant";
 import MainNav from "../../../components/user/MainNav";
 import { useNavigate } from "react-router-dom";
+import AlertModal from "../../../components/AlertModal";
 
 export default function UserProfile() {
     const navigate = useNavigate();
@@ -21,13 +22,15 @@ export default function UserProfile() {
         newPassword: "",
         confirmPassword: "",
     });
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);
-    const [showModal, setShowModal] = useState(false);
-    const [modalMessage, setModalMessage] = useState("");
 
+    const [modal, setModal] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: "",
+    });
 
     useEffect(() => {
         if (user) {
@@ -37,18 +40,15 @@ export default function UserProfile() {
                 phone: user.phone || "",
                 gender: user.gender || "other",
             });
-
-            if (user.profile_path) {
-                setPreview(`${baseUrl}/${user.profile_path}`);
-            } else {
-                setPreview(`${baseUrl}/images/user_profile.png`);
-            }
+            setPreview(
+                user.profile_path
+                    ? `${baseUrl}/${user.profile_path}`
+                    : `${baseUrl}/images/user_profile.png`
+            );
         }
     }, [user]);
 
-    const handleFileClick = () => {
-        fileInputRef.current.click();
-    };
+    const handleFileClick = () => fileInputRef.current.click();
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -64,8 +64,6 @@ export default function UserProfile() {
 
     const handleProfileUpdate = async (e) => {
         e.preventDefault();
-        setMessage("");
-        setError("");
         setLoading(true);
         try {
             const data = new FormData();
@@ -77,11 +75,20 @@ export default function UserProfile() {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setUser(res.data.user);
-            setMessage("อัปเดตโปรไฟล์สำเร็จแล้ว");
-            setShowModal(true)
+            setModal({
+                show: true,
+                type: "success",
+                title: "อัปเดตโปรไฟล์สำเร็จ",
+                message: "ข้อมูลของคุณถูกบันทึกเรียบร้อยแล้ว 🎉",
+            });
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || "เกิดข้อผิดพลาดในการอัปเดต");
+            setModal({
+                show: true,
+                type: "error",
+                title: "เกิดข้อผิดพลาด",
+                message: err.response?.data?.message || "ไม่สามารถอัปเดตโปรไฟล์ได้",
+            });
         } finally {
             setLoading(false);
         }
@@ -89,12 +96,15 @@ export default function UserProfile() {
 
     const handlePasswordUpdate = async (e) => {
         e.preventDefault();
-        setMessage("");
-        setError("");
         setLoading(true);
 
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setError("รหัสผ่านใหม่ไม่ตรงกัน");
+            setModal({
+                show: true,
+                type: "error",
+                title: "รหัสผ่านไม่ตรงกัน",
+                message: "กรุณากรอกรหัสผ่านใหม่ให้ตรงกัน",
+            });
             setLoading(false);
             return;
         }
@@ -108,11 +118,20 @@ export default function UserProfile() {
                 },
                 { withCredentials: true }
             );
-            setMessage("เปลี่ยนรหัสผ่านสำเร็จแล้ว");
             setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-            setShowModal(true)
+            setModal({
+                show: true,
+                type: "success",
+                title: "เปลี่ยนรหัสผ่านสำเร็จ",
+                message: "รหัสผ่านของคุณถูกอัปเดตเรียบร้อยแล้ว 🔐",
+            });
         } catch (err) {
-            setError(err.response?.data?.message || "เปลี่ยนรหัสผ่านไม่สำเร็จ");
+            setModal({
+                show: true,
+                type: "error",
+                title: "เกิดข้อผิดพลาด",
+                message: err.response?.data?.message || "เปลี่ยนรหัสผ่านไม่สำเร็จ",
+            });
         } finally {
             setLoading(false);
         }
@@ -124,19 +143,14 @@ export default function UserProfile() {
             <div className="min-h-screen bg-gradient-to-b from-purple-100 via-white to-purple-200 py-10 px-6">
                 {/* Profile Picture */}
                 <div className="flex flex-col items-center mb-10 mt-16">
-                    <div
-                        className="relative group cursor-pointer"
-                        onClick={handleFileClick}
-                    >
+                    <div className="relative group cursor-pointer" onClick={handleFileClick}>
                         <img
                             src={preview}
                             alt="Profile"
                             className="w-36 h-36 rounded-full object-cover border-4 border-white shadow-md transition-transform duration-200 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                            <span className="text-white text-sm font-semibold">
-                                เปลี่ยนรูป
-                            </span>
+                            <span className="text-white text-sm font-semibold">เปลี่ยนรูป</span>
                         </div>
                     </div>
                     <input
@@ -152,14 +166,12 @@ export default function UserProfile() {
 
                 {/* Profile Info Section */}
                 <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-8 mb-10">
-                    <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                        ข้อมูลส่วนตัว
-                    </h3>
+                    <h3 className="text-2xl font-bold mb-6 text-gray-800">ข้อมูลส่วนตัว</h3>
 
-                    {message && <div className="text-green-600 mb-3">{message}</div>}
-                    {error && <div className="text-red-600 mb-3">{error}</div>}
-
-                    <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <form
+                        onSubmit={handleProfileUpdate}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    >
                         <div>
                             <label className="block text-sm font-medium text-gray-700">ชื่อจริง</label>
                             <input
@@ -218,11 +230,12 @@ export default function UserProfile() {
 
                 {/* Password Section */}
                 <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-md p-8">
-                    <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                        เปลี่ยนรหัสผ่าน
-                    </h3>
+                    <h3 className="text-2xl font-bold mb-6 text-gray-800">เปลี่ยนรหัสผ่าน</h3>
 
-                    <form onSubmit={handlePasswordUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <form
+                        onSubmit={handlePasswordUpdate}
+                        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                    >
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700">รหัสผ่านปัจจุบัน</label>
                             <input
@@ -267,45 +280,15 @@ export default function UserProfile() {
                         </div>
                     </form>
                 </div>
-                {showModal && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-                        <div className="bg-white rounded-2xl shadow-2xl p-8 w-80 text-center animate-fade-in">
-                            {/* Success Icon */}
-                            <div className="flex justify-center mb-4">
-                                <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-green-100">
-                                    <svg
-                                        className="w-10 h-10 text-green-500 animate-bounce-in"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="3"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M5 13l4 4L19 7"
-                                        />
-                                    </svg>
-                                </div>
-                            </div>
 
-                            <h2 className="text-2xl font-bold text-gray-800 mb-2">สำเร็จ!</h2>
-                            <p className="text-gray-600 mb-6">{modalMessage || "ดำเนินการเสร็จสิ้นเรียบร้อยแล้ว"}</p>
-
-                            <button
-                                onClick={() => {
-                                    setShowModal(false);
-                                    window.location.reload();
-                                }}
-                                className="w-full py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:opacity-90 transition"
-                            >
-                                ตกลง
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-
+                {/* ✅ Modal */}
+                <AlertModal
+                    show={modal.show}
+                    type={modal.type}
+                    title={modal.title}
+                    message={modal.message}
+                    onClose={() => setModal({ show: false, type: "success", title: "", message: "" })}
+                />
             </div>
         </>
     );

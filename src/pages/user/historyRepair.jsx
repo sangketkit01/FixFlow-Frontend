@@ -265,10 +265,6 @@ const HistoryRepair = () => {
                                         <Eye className="w-4 h-4 mr-2" />
                                         ดูรายละเอียด
                                     </button>
-                                    <button className="inline-flex items-center px-6 py-2 border-2 border-purple-600 text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-colors">
-                                        <Download className="w-4 h-4 mr-2" />
-                                        ดาวน์โหลดใบเสร็จ
-                                    </button>
                                 </div>
                             </div>
                         ))

@@ -197,10 +197,6 @@ const TaskCard = ({ task, animationDelay, onRequestUpdate, isUpdating }) => {
         }
 
         switch (task.status) {
-            case 'pending':
-                // (เหมือนเดิม)
-                break;
-
             case 'accepted':
                 return (
                     <div className="flex space-x-2">
@@ -410,6 +406,7 @@ const MyTasksPage = () => {
                 confirmColor: 'bg-red-500 hover:bg-red-600',
                 icon: ThumbsDown,
             },
+
         };
 
         setConfirmation({

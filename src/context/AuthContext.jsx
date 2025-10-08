@@ -6,7 +6,7 @@ import baseUrl from "../../constants/ServerConstant";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(undefined);
     const [authReady, setAuthReady] = useState(false);
     const location = useLocation();
 
@@ -27,8 +27,10 @@ export const AuthProvider = ({ children }) => {
                 });
                 setUser(res.data);
             } catch (err) {
-                setUser(null);
                 console.warn("AuthContext error:", err?.response?.status);
+                if (err.response?.status === 401 && user === undefined) {
+                    setUser(null);
+                }
             } finally {
                 setAuthReady(true);
             }

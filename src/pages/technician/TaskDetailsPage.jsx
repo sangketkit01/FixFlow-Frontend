@@ -160,6 +160,8 @@ const TaskDetailsPage = () => {
     const [successMessage, setSuccessMessage] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
+    const [taskType, setTaskType] = useState(null);
+
 
     const [modal, setModal] = useState({ show: false, type: "", title: "", message: "" });
 
@@ -199,6 +201,8 @@ const TaskDetailsPage = () => {
             ]);
             setTask(taskResponse.data.task);
             setImages(imagesResponse.data.images);
+            setPayment(taskResponse.data.payment || null);
+            setTaskType(taskResponse.data.taskType || null);
         } catch (err) {
             console.error("Failed to fetch task details:", err);
             const message =
@@ -223,13 +227,15 @@ const TaskDetailsPage = () => {
                 { withCredentials: true }
             );
             setTask(response.data.task);
+            setSuccessMessage("รับงานเรียบร้อยแล้ว ✅");
         } catch (err) {
             console.error("Failed to accept task:", err);
-            Modal(`เกิดข้อผิดพลาดในการรับงาน: ${err.response?.data?.message || err.message}`);
+            setErrorMessage(`ไม่สามารถรับงานได้: ${err.response?.data?.message || err.message}`);
         } finally {
             setIsAccepting(false);
         }
     };
+
 
     // ✅ ปุ่ม "เสร็จสิ้นการซ่อม" → เปลี่ยนเป็น payment
     const handleCompleteRepair = async () => {
@@ -240,23 +246,16 @@ const TaskDetailsPage = () => {
                 { status: "payment" },
                 { withCredentials: true }
             );
-
             setTask(res.data.task);
-            setShowCompleteModal(true); // ✅ modal success เดิมใช้ได้เลย
+            setSuccessMessage("อัปเดตสถานะเป็น 'รอลูกค้าชำระเงิน' สำเร็จ ✅");
         } catch (err) {
             console.error("Error updating task status:", err);
-
-            setModal({
-                show: true,
-                type: "error",
-                title: "อัปเดตสถานะไม่สำเร็จ",
-                message:
-                    err.response?.data?.message || "เกิดข้อผิดพลาดในการอัปเดตสถานะงาน",
-            });
+            setErrorMessage(err.response?.data?.message || "อัปเดตสถานะไม่สำเร็จ ❌");
         } finally {
             setIsCompleting(false);
         }
     };
+
 
 
     // ✅ อัปโหลดรูปภาพ
@@ -271,7 +270,7 @@ const TaskDetailsPage = () => {
             formData.append("description", newImageDescription);
             formData.append("task_id", task._id);
 
-            const res = await axios.post(
+            await axios.post(
                 `${baseUrl}/technician/tasks/${task._id}/upload-image`,
                 formData,
                 {
@@ -280,21 +279,21 @@ const TaskDetailsPage = () => {
                 }
             );
 
-            const newImg = res.data.image;
-            setImages((prev) => [newImg, ...prev]);
+            setSuccessMessage("อัปโหลดรูปภาพสำเร็จ ✅");
+            await fetchTaskDetails(); // ✅ โหลดข้อมูลภาพใหม่จาก server จริง
             setNewImageFile(null);
             setNewImageDescription("");
             setShowUploadForm(false);
             setPreviewImage(null);
         } catch (error) {
             console.error("Upload image error:", error);
-            alert(
-                error.response?.data?.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ"
-            );
+            setErrorMessage(error.response?.data?.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
         } finally {
             setIsUploading(false);
         }
     };
+
+
 
     const formatCreationDate = (dateString) => {
         if (!dateString) return "ไม่มีข้อมูล";
@@ -313,13 +312,14 @@ const TaskDetailsPage = () => {
                 {},
                 { withCredentials: true }
             );
-            alert("ส่งคำขอยกเลิกงานสำเร็จ");
-            await fetchTaskDetails(); // โหลดข้อมูลใหม่
+            setSuccessMessage("ส่งคำขอยกเลิกงานเรียบร้อยแล้ว ✅");
+            await fetchTaskDetails();
         } catch (err) {
             console.error("Cancel repair failed:", err);
-            alert(err.response?.data?.message || "ไม่สามารถยกเลิกงานได้");
+            setErrorMessage(err.response?.data?.message || "ไม่สามารถยกเลิกงานได้ ❌");
         }
     };
+
 
     const [isConfirming, setIsConfirming] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -383,8 +383,8 @@ const TaskDetailsPage = () => {
 
                 {/* ============================ รายละเอียดงาน ============================ */}
                 <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide-up">
-                    <div className="flex justify-between items-start mb-6">
-                        <h2 className="text-2xl font-bold text-gray-800">{task.title}</h2>
+                    <div className="flex justify-between items-start">
+                        <h2 className="text-2xl font-bold text-gray-800">{taskType.name}</h2>
                         <div
                             className={`flex items-center space-x-2 px-3 py-1 text-sm font-semibold rounded-full ${statusInfo.color}`}
                         >
@@ -392,6 +392,8 @@ const TaskDetailsPage = () => {
                             <span>{statusInfo.text}</span>
                         </div>
                     </div>
+
+                    <h3 className="text-xl mb-6 font-medium text-gray-500">{task.title}</h3>
 
                     <div className="mb-8">
                         <h3 className="text-lg font-semibold text-gray-700 mb-2 flex items-center">
@@ -527,7 +529,7 @@ const TaskDetailsPage = () => {
 
                     {/* แสดงรูปทั้งหมด */}
                     {images.length > 0 ? (
-                        <div className="flex flex-col gap-6 max-h-[40rem] overflow-y-auto pr-2">
+                        <div className="flex flex-col gap-6 overflow-y-auto pr-2">
                             {images.map((image) => (
                                 <div
                                     key={image._id}
@@ -621,30 +623,58 @@ const TaskDetailsPage = () => {
                                 </tbody>
                             </table>
 
-                            {/* ถ้ามี slip */}
-                            {payment.type === "transfer" && payment.slip_image_path && (
-                                <div className="mt-4">
-                                    <h4 className="text-md font-semibold text-gray-700 mb-2">
-                                        หลักฐานการโอนเงิน:
-                                    </h4>
-                                    <img
-                                        src={baseUrl + payment.slip_image_path}
-                                        alt="หลักฐานการโอนเงิน"
-                                        className="w-full max-w-sm rounded-xl border shadow-md mx-auto"
-                                    />
-                                </div>
-                            )}
 
                             {/* ปุ่มยืนยันการชำระเงิน */}
                             {task.status === "payment" && (
-                                <div className="mt-8 flex justify-center">
-                                    <button
-                                        onClick={handleConfirmPayment}
-                                        className="flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition-all transform hover:-translate-y-0.5 active:scale-95"
-                                    >
-                                        <CheckCircle className="w-5 h-5" />
-                                        ยืนยันการชำระเงิน
-                                    </button>
+                                <div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-700 mb-2">หลักฐานการโอนเงิน:</h4>
+                                        {payment.slip_image_path ? (
+                                            <div className="flex items-center justify-center mb-3">
+                                                <img
+                                                    src={baseUrl + payment.slip_image_path}
+                                                    alt="slip"
+                                                    className="w-full max-w-sm rounded-lg border shadow-md"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center justify-center h-[200px] text-center text-gray-400 font-medium">
+                                                <h2>ยังไม่มีหลักฐานการโอนเงิน</h2>
+                                            </div>
+
+                                        )}
+                                    </div>
+                                    <div className="mt-8 flex justify-center">
+                                        <button
+                                            onClick={handleConfirmPayment}
+                                            className="flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow-md transition-all transform hover:-translate-y-0.5 active:scale-95"
+                                        >
+                                            <CheckCircle className="w-5 h-5" />
+                                            ยืนยันการชำระเงิน
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {task.status === "successful" && (
+                                <div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-700 mb-2">หลักฐานการโอนเงิน:</h4>
+                                        {payment.slip_image_path ? (
+                                            <div className="flex items-center justify-center mb-3">
+                                                <img
+                                                    src={baseUrl + payment.slip_image_path}
+                                                    alt="slip"
+                                                    className="w-full max-w-sm rounded-lg border shadow-md"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center justify-center h-[200px] text-center text-gray-400 font-medium">
+                                                <h2>ยังไม่มีหลักฐานการโอนเงิน</h2>
+                                            </div>
+
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </>
@@ -753,8 +783,10 @@ const TaskDetailsPage = () => {
                                         );
                                         setShowPaymentModal(false);
                                         setTask({ ...task, status: "successful" });
+                                        setSuccessMessage("ยืนยันการชำระเงินเรียบร้อยแล้ว 🎉");
                                     } catch (err) {
                                         console.error("confirm payment error:", err);
+                                        setErrorMessage("เกิดข้อผิดพลาดในการยืนยันการชำระเงิน ❌");
                                     } finally {
                                         setIsConfirming(false);
                                     }
