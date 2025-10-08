@@ -46,6 +46,12 @@ const StatusRepair = () => {
             icon: XCircle,
             iconColor: "text-red-600",
         },
+        pending: {
+            label: "รอดำเนินการ",
+            color: "bg-gray-100 text-gray-800 border-gray-300",
+            icon: Clock,
+            iconColor: "text-gray-600",
+        },
     };
 
 
@@ -150,7 +156,7 @@ const StatusRepair = () => {
                                             {task.task_type_id?.name || "ไม่ระบุ"}
                                         </h3>
                                         <span
-                                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${status.color}`}
+                                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${status.color === undefined ? 'bg-gray-100 text-gray-800 border-gray-300' : status.color}`}
                                         >
                                             <StatusIcon className={`w-4 h-4 mr-1 ${status.iconColor}`} />
                                             {status.label}
