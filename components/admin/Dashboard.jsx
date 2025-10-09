@@ -168,7 +168,7 @@ const Dashboard = () => {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {stats.map((stat, index) => (
-                    <div key={index} className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-600 hover:shadow-xl transition-shadow duration-300">
+                    <div key={index} className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-violet-600 hover:shadow-xl transition-shadow duration-300">
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{stat.title}</h3>
                             <div className={`${stat.color} w-10 h-10 rounded-full flex items-center justify-center bg-opacity-90 shadow-md`}>
@@ -205,7 +205,7 @@ const Dashboard = () => {
 
             {/* Revenue Card */}
             <div className="bg-white rounded-xl shadow-lg p-6 mb-10">
-                <div className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-6 text-white">
+                <div className="mt-6 bg-gradient-to-r from-violet-500 to-violet-400 rounded-lg p-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
                             <div className="flex items-center space-x-2 mb-2">
@@ -215,7 +215,7 @@ const Dashboard = () => {
                             <p className="text-3xl font-bold">
                                 ฿{revenueData.total_revenue.toLocaleString()}
                             </p>
-                            <p className="text-green-100 text-sm mt-1">
+                            <p className="text-violet-100 text-sm mt-1">
                                 จาก {revenueData.total_payments.toLocaleString()} รายการชำระเงิน
                             </p>
                         </div>

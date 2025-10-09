@@ -88,18 +88,29 @@ function Navtech() {
                             onClick={() => setIsProfileOpen(!isProfileOpen)}
                             className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg hover:bg-purple-50 cursor-pointer transition-colors duration-200"
                         >
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center">
-                                <img
-                                    src={user && user.profile_path ? baseUrl + "/" + user.profile_path : baseUrl + "/images/user_profile.png"}
-                                    alt="User Avatar"
-                                    width={40}
-                                    height={40}
-                                    className="w-10 h-10 rounded-full object-cover"
-                                />
-                            </div>
-                            <div className="text-left">
-                                <p className="text-sm font-semibold text-gray-800">{user && user.full_name ? user.full_name : "Unknown"}</p>
-                                <p className="text-xs text-gray-500">User Account</p>
+
+                            <div className="flex items-center space-x-3 bg-white px-4 py-2 rounded-lg hover:bg-purple-50 cursor-pointer transition-colors duration-200">
+                                <div className="w-10 h-10 rounded-full overflow-hidden">
+                                    <img
+                                        src={
+                                            user && user.profile_path
+                                                ? `${baseUrl}${user.profile_path}`
+                                                : `${baseUrl}/images/user_profile.png`
+                                        }
+                                        alt="Technician Avatar"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+
+                                <div className="text-left">
+                                    <p className="text-sm font-semibold text-gray-800">
+                                        {user && (user.full_name || user.name)
+                                            ? user.full_name || user.name
+                                            : "Technician"}
+                                    </p>
+                                    <p className="text-xs text-gray-500">Technician Account</p>
+                                </div>
+
                             </div>
                         </button>
 
@@ -107,11 +118,18 @@ function Navtech() {
                         {isProfileOpen && (
                             <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-purple-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                                 <a
-                                    href="/user/profile"
+                                    href="/technician/profile"
                                     className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
                                 >
                                     <User className="w-5 h-5" />
                                     <span className="font-medium">จัดการโปรไฟล์</span>
+                                </a>
+                                <a
+                                    href="/technician/change-password"
+                                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+                                >
+                                    <Clock className="w-5 h-5" />
+                                    <span className="font-medium">เปลี่ยนรหัสผ่าน</span>
                                 </a>
                                 <div className="border-t border-purple-100 my-1"></div>
                                 <a
