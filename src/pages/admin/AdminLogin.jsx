@@ -27,7 +27,7 @@ export default function AdminLogin() {
             );
 
             console.log("Admin login success:", res.data);
-            navigate("/admin/dashboard");
+            navigate("/admin/home");
         } catch (error) {
             console.error(error);
             if (error.response) {
