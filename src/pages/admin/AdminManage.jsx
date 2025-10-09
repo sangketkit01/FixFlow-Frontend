@@ -1,9 +1,7 @@
-// adminmanage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// Import Components
 import Header from '../../../components/admin/Header';
 import StatsCards from '../../../components/admin/StatsCards';
 import TechniciansTable from '../../../components/admin/TechniciansTable';
