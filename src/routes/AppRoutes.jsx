@@ -1,45 +1,66 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
-import LoginPage from "../pages/user/Login";
-import Rprepair from "../pages/user/Rprepair";
-
-export const PublicRoute = ({ children }) => {
-    const { user } = useAuth();
-
-    if (user) {
-        if (user.role === "admin") return <Navigate to={"admin"} replace />
-        if (user.role === "technician") return <Navigate to={"technician"} replace />
-        return <Navigate to={"home"} replace />
-    }
-
-    return children;
-}
-
-const ProtectedRoute = ({ children, role }) => {
-    const { user } = useAuth();
-
-    if (!user) {
-        if (role === "admin") return <Navigate to="/admin/login" replace />;
-        if (role === "technician") return <Navigate to="/technician/login" replace />;
-        return <Navigate to="/login" replace />;
-    }
-
-    if (role && user.role !== role) {
-        return <Navigate to="/" replace />;
-    }
-
-    return children;
-};
+import UserLogin from "../pages/user/Login";
+import UserRegister from "../pages/user/Register";
+import { UserRoute } from "./UserRoutes";
+import { AdminRoute } from "./AdminRoutes";
+import AdminLogin from "../pages/admin/AdminLogin";
+import TechnicianLogin from "../pages/technician/TechnicianLogin";
+import TechnicianRegister from "../pages/technician/TechnicianRegister";
+import IndexPage from "../pages/index";
+import { TechnicianRoute } from "./TechnicianRoutes";
+import { Logout } from "../pages/Logout";
 
 
 const AppRoutes = () => {
     return (
-        <Routes>
-            <Route path="/" element={<h1 className="text-black">Hello World ทดสอบฟ้อน</h1>} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/report-repair" element={<Rprepair />} />
-        </Routes>
-    )
-}
+        <>
+            <Routes>
+                <Route path="/" element={<IndexPage />} />
+                <Route
+                    path="/login"
+                    element={
+                        <UserLogin />
+                    }
+                />
+                <Route
+                    path="/logout"
+                    element={
+                        <Logout />
+                    }
+                />
+
+                <Route path="/admin/login" element={
+                    <AdminLogin />
+                } />
+
+                <Route path="/technician/login" element={
+                    <TechnicianLogin />
+                } />
+
+                <Route
+                    path="/register"
+                    element={
+                        <UserRegister />
+                    }
+                />
+
+                <Route
+                    path="/technician/register"
+                    element={
+                        <TechnicianRegister />
+                    }
+                />
+
+                {UserRoute}
+                {AdminRoute}
+                {TechnicianRoute}
+            </Routes>
+
+        </>
+    );
+};
+
 
 export default AppRoutes;
+
