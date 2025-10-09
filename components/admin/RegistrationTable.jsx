@@ -93,7 +93,6 @@ const Dashboard = () => {
         } catch (err) {
             console.error("Error fetching quick stats:", err);
             
-            // ถ้า endpoint นี้ยังไม่มี ให้ใช้ข้อมูลจาก endpoint อื่นหรือคำนวณเอง
             setQuickStats({
                 totalTechnicians: 0,
                 technicianChange: '+0',
@@ -131,7 +130,6 @@ const Dashboard = () => {
         } catch (err) {
             console.error("Error fetching technician stats:", err);
             
-            // ถ้า endpoint นี้ยังไม่มี ให้ดึงข้อมูลจาก technicians list แล้วคำนวณเอง
             try {
                 const techResponse = await axios.get(`${API_BASE_URL}/admin/technicians`, {
                     withCredentials: true
@@ -180,19 +178,17 @@ const Dashboard = () => {
             const data = response.data;
             console.log('Recent technicians data:', data);
             
-            setRecentTechnicians(data.slice(0, 5)); // แสดงแค่ 5 คนล่าสุด
+            setRecentTechnicians(data.slice(0, 5)); 
             
         } catch (err) {
             console.error("Error fetching recent technicians:", err);
             
-            // ถ้า endpoint นี้ยังไม่มี ให้ดึงข้อมูลจาก technicians list แล้วเลือกมา 5 คนล่าสุด
             try {
                 const techResponse = await axios.get(`${API_BASE_URL}/admin/technicians`, {
                     withCredentials: true
                 });
                 
                 const technicians = techResponse.data;
-                // เรียงตามวันที่สร้างล่าสุดมาแรก
                 const sortedTechs = technicians
                     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
                     .slice(0, 5);
@@ -218,7 +214,7 @@ const Dashboard = () => {
             ]);
         } catch (err) {
             console.error("Error fetching all data:", err);
-            setError("⚠️ มีปัญหาในการโหลดข้อมูลบางส่วน");
+            setError("");
         } finally {
             setLoading(false);
         }
@@ -228,7 +224,6 @@ const Dashboard = () => {
         fetchAllData();
     }, []);
 
-    // ฟังก์ชันรีเฟรชข้อมูล
     const handleRefresh = () => {
         setError(null);
         fetchAllData();
@@ -239,19 +234,19 @@ const Dashboard = () => {
         switch (status) {
             case 'approved':
                 return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                    ✅ อนุมัติ
+                     อนุมัติ
                 </span>;
             case 'pending':
                 return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-                    ⏳ รอดำเนินการ
+                     รอดำเนินการ
                 </span>;
             case 'rejected':
                 return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                    ❌ ปฏิเสธ
+                     ปฏิเสธ
                 </span>;
             default:
                 return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                    ❓ ไม่ทราบสถานะ
+                    ไม่ทราบสถานะ
                 </span>;
         }
     };

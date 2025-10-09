@@ -53,12 +53,12 @@ const AdminManage = () => {
             console.error("Error fetching all technicians:", err);
             
             if (err.code === 'ERR_NETWORK') {
-                setError("⚠️ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+                setError("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
             } else if (err.response?.status === 401) {
-                setError("⚠️ กรุณาล็อกอินใหม่");
+                setError("กรุณาล็อกอินใหม่");
                 setTimeout(() => navigate('/admin/login'), 2000);
             } else {
-                setError("⚠️ เกิดข้อผิดพลาดในการโหลดข้อมูล");
+                setError("เกิดข้อผิดพลาดในการโหลดข้อมูล");
             }
         } finally {
             setLoading(false);
@@ -71,9 +71,8 @@ const AdminManage = () => {
 
     // ฟังก์ชันจัดการการแก้ไขข้อมูลช่าง
     const handleEdit = (tech) => {
-        // ตรวจสอบประเภทก่อนแก้ไข
         if (tech.type === 'registration') {
-            setFeedbackMessage('⚠️ ไม่สามารถแก้ไขข้อมูลการสมัครที่รอดำเนินการได้');
+            setFeedbackMessage('ไม่สามารถแก้ไขข้อมูลการสมัครที่รอดำเนินการได้');
             setIsSuccess(false);
             setShowFeedbackModal(true);
             return;
@@ -176,7 +175,6 @@ const AdminManage = () => {
             );
             setIsSuccess(true);
 
-            // รีเฟรชข้อมูลหากอนุมัติ (เพราะมีการเพิ่มข้อมูลใหม่)
             if (newStatus === 'approved' && statusTech.type === 'registration') {
                 setTimeout(() => {
                     fetchAllTechnicians();
@@ -239,7 +237,6 @@ const AdminManage = () => {
 
     // ฟังก์ชันดูโปรไฟล์ช่าง
     const handleViewProfile = (tech) => {
-        // ✅ อนุญาตให้ดูโปรไฟล์ได้ถ้าเป็น technician หรือ registration ที่อนุมัติแล้ว
         if (tech.type === 'registration' && tech.status !== 'approved') {
             setFeedbackMessage('⚠️ ยังไม่สามารถดูโปรไฟล์การสมัครที่รอดำเนินการได้');
             setIsSuccess(false);
@@ -247,7 +244,6 @@ const AdminManage = () => {
             return;
         }
         
-        // ✅ สำหรับ technician ทุกรายและ registration ที่ approved แล้ว
         navigate(`/admin/technicians/${tech._id}`);
     };
 

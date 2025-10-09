@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Clock, CheckCircle, AlertCircle, TrendingUp, Users, Wrench, DollarSign, Star } from 'lucide-react';
+import { Clock, CheckCircle, AlertCircle, TrendingUp, DollarSign, RefreshCw } from 'lucide-react';
 
 const Dashboard = () => {
     const [stats, setStats] = useState([]);
-    const [quickStats, setQuickStats] = useState({});
+    const [revenueData, setRevenueData] = useState({
+        total_revenue: 0,
+        total_payments: 0
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -61,62 +64,45 @@ const Dashboard = () => {
             
         } catch (err) {
             console.error("Error fetching stats:", err);
-            setError("⚠️ ไม่สามารถโหลดข้อมูลสถิติล่าสุดได้");
+            setError("ไม่สามารถโหลดข้อมูลสถิติล่าสุดได้");
         }
     };
 
-    // ฟังก์ชันดึงข้อมูลภาพรวมระบบ
-    const fetchQuickStats = async () => {
+    // ฟังก์ชันดึงข้อมูลรายได้จาก payment_details
+    const fetchRevenueStats = async () => {
         try {
-            console.log('Fetching quick stats from:', `${API_BASE_URL}/admin/stats/overview`);
+            console.log('Fetching revenue stats from:', `${API_BASE_URL}/admin/stats/revenue`);
             
-            const response = await axios.get(`${API_BASE_URL}/admin/stats/dashboard`, {
-            withCredentials: true
-        });
-
+            const response = await axios.get(`${API_BASE_URL}/admin/stats/revenue`, {
+                withCredentials: true
+            });
             
             const data = response.data;
-            console.log('Quick stats data:', data);
+            console.log('Revenue stats data:', data);
             
-            setQuickStats({
-                totalTechnicians: data.total_technicians || 0,
-                technicianChange: data.technician_change || '+0',
-                totalServices: data.total_services || 0,
-                servicesChange: data.services_change || '+0',
-                monthlyRevenue: data.monthly_revenue || 0,
-                revenueChange: data.revenue_change || '+0%',
-                satisfactionRate: data.satisfaction_rate || 0,
-                satisfactionChange: data.satisfaction_change || '+0'
-            });
+            if (data.success) {
+                setRevenueData(data.data);
+            } else {
+                throw new Error('Failed to fetch revenue data');
+            }
             
         } catch (err) {
-            console.error("Error fetching quick stats:", err);
-            
-            // ถ้า endpoint นี้ยังไม่มี ให้ใช้ข้อมูลจาก endpoint อื่นหรือคำนวณเอง
-            setQuickStats({
-                totalTechnicians: 0,
-                technicianChange: '+0',
-                totalServices: 0,
-                servicesChange: '+0',
-                monthlyRevenue: 0,
-                revenueChange: '+0%',
-                satisfactionRate: 0,
-                satisfactionChange: '+0'
-            });
+            console.error("Error fetching revenue stats:", err);
+            setError("ไม่สามารถโหลดข้อมูลรายได้ได้");
         }
     };
 
-    // ฟังก์ชันดึงข้อมูลทั้งหมด
+    // ดึงข้อมูลทั้งหมด
     const fetchAllData = async () => {
         setLoading(true);
         try {
             await Promise.all([
                 fetchStats(),
-                fetchQuickStats()
+                fetchRevenueStats()
             ]);
         } catch (err) {
             console.error("Error fetching all data:", err);
-            setError("⚠️ มีปัญหาในการโหลดข้อมูลบางส่วน");
+            setError("มีปัญหาในการโหลดข้อมูลบางส่วน");
         } finally {
             setLoading(false);
         }
@@ -148,24 +134,10 @@ const Dashboard = () => {
                     ))}
                 </div>
                 
-                {/* Loading for Quick Stats */}
+                {/* Loading for Revenue Card */}
                 <div className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="h-6 bg-gray-200 rounded w-32"></div>
-                        <div className="w-5 h-5 bg-gray-200 rounded"></div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        {[1, 2, 3, 4].map((item) => (
-                            <div key={item} className="bg-gray-100 p-4 rounded-lg">
-                                <div className="flex items-center space-x-2 mb-2">
-                                    <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                                    <div className="h-4 bg-gray-200 rounded w-16"></div>
-                                </div>
-                                <div className="h-8 bg-gray-200 rounded w-12 mb-1"></div>
-                                <div className="h-3 bg-gray-200 rounded w-20"></div>
-                            </div>
-                        ))}
-                    </div>
+                    <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
+                    <div className="bg-gray-200 rounded-lg p-6 h-32"></div>
                 </div>
             </div>
         );
@@ -173,11 +145,7 @@ const Dashboard = () => {
 
     return (
         <div>
-            {/* Header with Refresh Button */}
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">แดชบอร์ดภาพรวม</h2>
-                
-            </div>
+            
 
             {/* Error Display */}
             {error && (
@@ -235,38 +203,28 @@ const Dashboard = () => {
                 ))}
             </div>
 
-            {/* Quick Stats */}
+            {/* Revenue Card */}
             <div className="bg-white rounded-xl shadow-lg p-6 mb-10">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">ภาพรวมระบบ</h3>
-                    <TrendingUp className="w-5 h-5 text-gray-400" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg hover:bg-blue-100 transition-colors">
-                        <div className="flex items-center space-x-2 mb-2">
-                            <Users className="w-4 h-4 text-blue-600" />
-                            <span className="text-sm font-medium text-blue-700">ช่างทั้งหมด </span>
+                <div className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-6 text-white">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="flex items-center space-x-2 mb-2">
+                                <DollarSign className="w-5 h-5" />
+                                <span className="text-sm font-medium">รายได้รวมทั้งหมด</span>
+                            </div>
+                            <p className="text-3xl font-bold">
+                                ฿{revenueData.total_revenue.toLocaleString()}
+                            </p>
+                            <p className="text-green-100 text-sm mt-1">
+                                จาก {revenueData.total_payments.toLocaleString()} รายการชำระเงิน
+                            </p>
                         </div>
-                        <p className="text-2xl font-bold text-blue-800">{quickStats.totalTechnicians}</p>                    </div>
-                    
-                   
-                    
-                    <div className="bg-purple-50 p-4 rounded-lg hover:bg-purple-100 transition-colors">
-                        <div className="flex items-center space-x-2 mb-2">
-                            <DollarSign className="w-4 h-4 text-purple-600" />
-                            <span className="text-sm font-medium text-purple-700">รายได้</span>
+                        <div className="bg-white bg-opacity-20 p-3 rounded-full">
+                            <DollarSign className="w-8 h-8" />
                         </div>
-                        <p className="text-2xl font-bold text-purple-800">
-                            {quickStats.monthlyRevenue.toLocaleString()}
-                        </p>
-                        <p className="text-xs text-purple-600">{quickStats.revenueChange} เดือนนี้</p>
                     </div>
-                    
-                   
                 </div>
             </div>
-
-            
         </div>
     );
 };

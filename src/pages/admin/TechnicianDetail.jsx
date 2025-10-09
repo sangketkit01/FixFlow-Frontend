@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Edit2, Phone, Mail, MapPin, Calendar, User, CreditCard, X, Trash2, CheckCircle } from 'lucide-react'; // เพิ่ม CheckCircle
+import { ArrowLeft, Edit2, Phone, Mail, MapPin, Calendar, User, CreditCard, X, Trash2, CheckCircle } from 'lucide-react'; 
 import Header from '../../../components/admin/Header';
 
 const TechnicianDetail = () => {
@@ -12,7 +12,7 @@ const TechnicianDetail = () => {
     const [error, setError] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false); // 1. เพิ่ม State สำหรับ Success Modal
+    const [showSuccessModal, setShowSuccessModal] = useState(false); 
     const [formData, setFormData] = useState({});
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -51,7 +51,6 @@ const TechnicianDetail = () => {
         });
     };
 
-    // New handler for closing success modal
     const handleCloseSuccessModal = () => {
         setShowSuccessModal(false);
     };
@@ -101,12 +100,10 @@ const TechnicianDetail = () => {
 
             await axios.put(`${API_BASE_URL}/technicians/${id}`, payload, { withCredentials: true });
 
-            // 2. ปรับปรุงส่วนแจ้งเตือน:
             setTechnician(payload);
             setFormData({ ...payload, password: '' });
             setShowEditModal(false);
-            setShowSuccessModal(true); // แสดง Success Modal แทน alert
-            // alert('บันทึกข้อมูลสำเร็จ'); // ลบ alert เดิมออก
+            setShowSuccessModal(true); 
         } catch (err) {
             console.error('Error updating technician:', err.response?.data || err);
             alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -442,7 +439,7 @@ const TechnicianDetail = () => {
                                         </div>
 
 
-                                        <div>
+                                        {/* <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">รหัสบัตรประชาชน (รูปภาพ)</label>
                                             <input
                                                 type="text"
@@ -452,7 +449,7 @@ const TechnicianDetail = () => {
                                                 placeholder="เว้นว่างหากไม่เปลี่ยนรูป"
                                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
@@ -512,15 +509,14 @@ const TechnicianDetail = () => {
                 </div>
             )}
 
-            {/* 3. Success Alert Modal (ใหม่) */}
             {showSuccessModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6">
                         <div className="text-center">
-                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4 animate-bounce">
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4 ">
                                 <CheckCircle className="h-6 w-6 text-green-600" />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">บันทึกข้อมูลสำเร็จ! ✅</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">บันทึกข้อมูลสำเร็จ! </h3>
                             <p className="text-sm text-gray-600 mb-6">
                                 ข้อมูลช่างได้รับการอัปเดตเรียบร้อยแล้ว
                             </p>

@@ -47,7 +47,7 @@ export default function AdminLogin() {
         setErrorMessage("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
       } else if (status === 404) {
         setErrorMessage(
-          "Error 404: ไม่พบเส้นทางเข้าสู่ระบบใน Backend (Server อาจไม่ทำงาน)"
+          
         );
       } else if (status === 400) {
         setErrorMessage("ข้อมูลไม่สมบูรณ์ (Bad Request)");

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../../../components/admin/Header'; 
 
-// Helper Component สำหรับ Input Field (คงเดิม)
 const InputField = ({ name, placeholder, value, onChange, type = 'text', label, required = false }) => (
     <div className="flex flex-col">
         {label && <label htmlFor={name} className="text-sm font-medium text-gray-700 mb-1">{label} {required && <span className="text-red-500">*</span>}</label>}
@@ -19,7 +18,6 @@ const InputField = ({ name, placeholder, value, onChange, type = 'text', label, 
     </div>
 );
 
-// Helper Component สำหรับ Header แต่ละส่วน (คงเดิม)
 const SectionHeader = ({ title, description }) => (
     <div className="mb-4 border-b border-gray-300 pb-2 flex justify-between items-end">
         <h3 className="text-xl font-bold text-gray-800">{title}</h3>
@@ -59,10 +57,8 @@ const AddTechnician = () => {
         e.preventDefault();
         
         try {
-            // ส่งข้อมูลไป backend /admin/technicians
             const res = await axios.post('http://localhost:8080/admin/technicians', form, {
                 withCredentials: true 
-                // headers: { Authorization: `Bearer ${localStorage.getItem('adminToken')}` } 
             });
 
             if (res.status === 201) {
@@ -77,7 +73,6 @@ const AddTechnician = () => {
     
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* 1. Header Component */}
             <Header />
 
             <div className="flex justify-center items-start py-10 px-4">
@@ -128,11 +123,9 @@ const AddTechnician = () => {
                             type="number"
                             label="อายุ "
                         />
-                        {/* Placeholder field to keep layout even, can be replaced or removed */}
                         <div className="hidden md:block"></div> 
                     </div>
 
-                    {/* --- ส่วนที่ 2: ข้อมูลที่อยู่และพื้นที่ทำงาน (ไม่บังคับ) --- */}
                     <SectionHeader title="ข้อมูลที่อยู่และพื้นที่ทำงาน" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                         <InputField
@@ -182,10 +175,8 @@ const AddTechnician = () => {
                             type="text"
                             label="บัตรประชาชน"
                         />
-                        {/* id_card_image_path และ profile_path สำหรับการอัปโหลดไฟล์ สามารถเพิ่มในภายหลังได้ */}
                     </div>
 
-                    {/* --- ปุ่ม Submit/Cancel --- */}
                     <div className="flex justify-end mt-8 space-x-4 pt-4 border-t border-gray-200">
                         <button
                             type="button"

@@ -1,4 +1,3 @@
-// TechniciansTable.jsx
 import React from 'react';
 import { Search, Plus, Edit, Trash2, UserCheck } from 'lucide-react';
 import StatusBadge from './StatusBadge';
@@ -22,30 +21,30 @@ const TechniciansTable = ({
         tech.specialty?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const getSpecialtyBadge = (tech) => {
-        const specialty = tech.specialty || "ช่างทั่วไป";
+    // const getSpecialtyBadge = (tech) => {
+    //     const specialty = tech.specialty || "ช่างทั่วไป";
         
-        const getBadgeColor = (spec) => {
-            switch(spec.toLowerCase()) {
-                case 'ช่างแอร์':
-                    return 'bg-blue-100 text-blue-800 border-blue-200';
-                case 'ช่างไฟ':
-                    return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-                case 'ช่างประปา':
-                    return 'bg-green-100 text-green-800 border-green-200';
-                case 'ช่างอิเล็กทรอนิกส์':
-                    return 'bg-purple-100 text-purple-800 border-purple-200';
-                default:
-                    return 'bg-gray-100 text-gray-800 border-gray-200';
-            }
-        };
+    //     const getBadgeColor = (spec) => {
+    //         switch(spec.toLowerCase()) {
+    //             case 'ช่างแอร์':
+    //                 return 'bg-blue-100 text-blue-800 border-blue-200';
+    //             case 'ช่างไฟ':
+    //                 return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    //             case 'ช่างประปา':
+    //                 return 'bg-green-100 text-green-800 border-green-200';
+    //             case 'ช่างอิเล็กทรอนิกส์':
+    //                 return 'bg-purple-100 text-purple-800 border-purple-200';
+    //             default:
+    //                 return 'bg-gray-100 text-gray-800 border-gray-200';
+    //         }
+    //     };
 
-        return (
-            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getBadgeColor(specialty)}`}>
-                {specialty}
-            </span>
-        );
-    };
+    //     return (
+    //         <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getBadgeColor(specialty)}`}>
+    //             {specialty}
+    //         </span>
+    //     );
+    // };
 
     const formatDate = (dateString) => {
         if (!dateString) return '-';
@@ -151,6 +150,7 @@ const TechniciansTable = ({
                         <tr className="border-b border-gray-200">
                             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">ชื่อ-สกุล</th>
                             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">สถานะ</th>
+
                             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">เบอร์โทร</th>
                             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">อีเมล</th>
                             <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">สถิติงาน</th>
@@ -177,9 +177,9 @@ const TechniciansTable = ({
                                         </div>
                                     </div>
                                 </td>
-                                <td className="py-4 px-4">
+                                {/* <td className="py-4 px-4">
                                     {getSpecialtyBadge(tech)}
-                                </td>
+                                </td> */}
                                 <td className="py-4 px-4">
                                     <StatusBadge status={tech.status} />
                                 </td>
