@@ -6,12 +6,15 @@ import baseUrl from "../../constants/ServerConstant";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(undefined);
+    const [authReady, setAuthReady] = useState(false);
     const location = useLocation();
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
+                await new Promise((res) => setTimeout(res, 300));
+
                 let endpoint = "/user/me";
                 if (location.pathname.startsWith("/admin")) {
                     endpoint = "/admin/me";
@@ -24,23 +27,23 @@ export const AuthProvider = ({ children }) => {
                 });
                 setUser(res.data);
             } catch (err) {
-                setUser(null);
-                console.log("AuthContext error:", err);
+                console.warn("AuthContext error:", err?.response?.status);
+                if (err.response?.status === 401 && user === undefined) {
+                    setUser(null);
+                }
             } finally {
-                setLoading(false);
+                setAuthReady(true);
             }
         };
 
         fetchUser();
-    }, []);
-
+    }, [location.pathname]);
 
     return (
-        <AuthContext.Provider value={{ user, setUser, loading }}>
+        <AuthContext.Provider value={{ user, setUser, authReady }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
 
 export const useAuth = () => useContext(AuthContext);

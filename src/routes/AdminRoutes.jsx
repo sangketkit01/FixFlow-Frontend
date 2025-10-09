@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 import { ProtectedRoute } from "./AuthRoutes"
 
-
 export const AdminRoute = () => {
     return (
         <Routes>
