@@ -64,53 +64,59 @@ const TechnicianDetail = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setSaving(true);
-        try {
-            const payload = {
-                ...formData,
-                age: Number(formData.age),
-                birth_date: formData.birth_date ? new Date(formData.birth_date) : null
-            };
+    e.preventDefault();
+    setSaving(true);
+    try {
+        const payload = {
+            ...formData,
+            age: Number(formData.age),
+            birth_date: formData.birth_date ? new Date(formData.birth_date) : null
+        };
 
-            if (!payload.password) {
-                payload.password = technician.password;
-            }
-
-            const requiredFields = [
-                'full_name',
-                'email',
-                'phone',
-                'age',
-                'id_card',
-                'id_card_image_path',
-                'birth_date', 'address',
-                'district',
-                'province',
-                'working_area_district',
-                'working_area_province'
-            ];
-            for (let field of requiredFields) {
-                if (!payload[field]) {
-                    alert(`กรุณากรอกข้อมูล: ${field}`);
-                    setSaving(false);
-                    return;
-                }
-            }
-
-            await axios.put(`${API_BASE_URL}/technicians/${id}`, payload, { withCredentials: true });
-
-            setTechnician(payload);
-            setFormData({ ...payload, password: '' });
-            setShowEditModal(false);
-            setShowSuccessModal(true); 
-        } catch (err) {
-            console.error('Error updating technician:', err.response?.data || err);
-            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
-        } finally {
-            setSaving(false);
+        if (!payload.password) {
+            payload.password = technician.password;
         }
-    };
+
+        if (!technician.working_area_province && !technician.working_area_district) {
+            delete payload.working_area_province;
+            delete payload.working_area_district;
+        }
+
+      
+        const requiredFields = [
+            'full_name',
+            'email',
+            'phone',
+            'age',
+            'id_card',
+            'id_card_image_path',
+            'birth_date', 
+            'address',
+            'district',
+            'province'
+        ];
+        for (let field of requiredFields) {
+            if (!payload[field]) {
+                alert(`กรุณากรอกข้อมูล: ${field}`);
+                setSaving(false);
+                return;
+            }
+        }
+
+        await axios.put(`${API_BASE_URL}/technicians/${id}`, payload, { withCredentials: true });
+
+        setTechnician(payload);
+        setFormData({ ...payload, password: '' });
+        setShowEditModal(false);
+        setShowSuccessModal(true); 
+    } catch (err) {
+        console.error('Error updating technician:', err.response?.data || err);
+        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+        setSaving(false);
+    }
+};
+
 
     const handleDelete = async () => {
         setDeleting(true);
