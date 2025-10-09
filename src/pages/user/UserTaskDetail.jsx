@@ -97,6 +97,7 @@ export default function UserTaskDetail() {
 
             setModal({
                 show: true,
+                type: "success",
                 title: "อัปโหลดรูปภาพสำเร็จ",
                 message: "เพิ่มรูปภาพประกอบเรียบร้อยแล้ว",
             });

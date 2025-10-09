@@ -62,14 +62,6 @@ const TechniciansTable = ({
     };
 
    const TaskStatsCompact = ({ tech }) => {
-    if (tech.type !== 'technician') {
-        return (
-            <div className="text-center">
-                <span className="text-gray-400 text-xs">-</span>
-            </div>
-        );
-    }
-
     const totalTasks = tech.total_tasks || 0;
     const successfulTasks = tech.successful_tasks || 0;
     const fixingTasks = tech.fixing_tasks || 0;
@@ -105,6 +97,7 @@ const TechniciansTable = ({
         </div>
     );
 };
+
 
     
 

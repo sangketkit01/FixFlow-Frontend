@@ -76,7 +76,7 @@ const StatusModal = ({
                         <UserX className="w-5 h-5 text-red-600" />
                     </button>
 
-                    <button
+                    {/* <button
                         onClick={() => onStatusChange('pending')}
                         className="w-full flex items-center justify-between p-4 border border-yellow-200 rounded-lg hover:bg-yellow-50 transition-colors"
                     >
@@ -90,7 +90,7 @@ const StatusModal = ({
                             </div>
                         </div>
                         <Clock className="w-5 h-5 text-yellow-600" />
-                    </button>
+                    </button> */}
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-gray-200">

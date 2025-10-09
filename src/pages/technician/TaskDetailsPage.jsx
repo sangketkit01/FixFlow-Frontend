@@ -163,7 +163,7 @@ const TaskDetailsPage = () => {
     const [taskType, setTaskType] = useState(null);
 
 
-    const [modal, setModal] = useState({ show: false, type: "", title: "", message: "" });
+    const [modal, setModal] = useState({ show: false, type: "success", title: "", message: "" });
 
 
     useEffect(() => {

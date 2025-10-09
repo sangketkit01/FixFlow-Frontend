@@ -63,6 +63,7 @@ function Navtech() {
             ing
           </h1>
 
+<<<<<<< HEAD
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             {navItems.map((item, index) => {
@@ -77,6 +78,67 @@ function Navtech() {
                       ? "text-purple-700 bg-purple-100"
                       : "text-gray-700 hover:text-purple-600 hover:bg-purple-50"
                   }`}
+=======
+                                <div className="text-left">
+                                    <p className="text-sm font-semibold text-gray-800">
+                                        {user && (user.full_name || user.name)
+                                            ? user.full_name || user.name
+                                            : "Technician"}
+                                    </p>
+                                    <p className="text-xs text-gray-500">Technician Account</p>
+                                </div>
+
+                            </div>
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {isProfileOpen && (
+                            <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-purple-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <a
+                                    href="/technician/profile"
+                                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-200"
+                                >
+                                    <User className="w-5 h-5" />
+                                    <span className="font-medium">จัดการโปรไฟล์</span>
+                                </a>
+                                <a
+                                    href="/technician/change-password"
+                                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+                                >
+                                    <Clock className="w-5 h-5" />
+                                    <span className="font-medium">เปลี่ยนรหัสผ่าน</span>
+                                </a>
+                                <div className="border-t border-purple-100 my-1"></div>
+                                <a
+                                    href="/logout"
+                                    className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors duration-200"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                    <a href='/logout' className="font-medium text-gray-700">ออกจากระบบ</a>
+                                </a>
+                            </div>
+                        )}
+
+                        {/* Mobile Menu Button */}
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="md:hidden p-2 rounded-lg hover:bg-purple-100 transition-colors duration-200"
+                            aria-label="Toggle menu"
+                        >
+                            {isMenuOpen ? (
+                                <X className="w-6 h-6 text-purple-700" />
+                            ) : (
+                                <Menu className="w-6 h-6 text-purple-700" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mobile Menu */}
+                <div
+                    className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+>>>>>>> 61766d6609f88fc36b0df75d7e0e19a89ba61e39
                 >
                   <div className="flex items-center space-x-2">
                     <Icon
